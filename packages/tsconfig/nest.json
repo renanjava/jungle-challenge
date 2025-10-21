@@ -1,0 +1,17 @@
+{
+  "$schema": "https://json.schemastore.org/tsconfig",
+  "display": "NestJS",
+  "extends": "./base.json",
+  "compilerOptions": {
+    "module": "CommonJS",
+    "target": "ES2019",
+    "sourceMap": true,
+    "outDir": "dist",
+    "rootDir": "src",
+    "removeComments": true,
+    "strictPropertyInitialization": false,
+    "incremental": true
+  },
+  "include": ["src/**/*.ts"],
+  "exclude": ["node_modules", "dist"]
+}
