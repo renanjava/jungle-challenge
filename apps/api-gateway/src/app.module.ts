@@ -3,8 +3,7 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 import { APP_GUARD } from '@nestjs/core';
-import { TerminusModule } from '@nestjs/terminus';
-import { HttpModule } from '@nestjs/axios';
+import { HealthCheckModule } from './health-check/health-check.module';
 
 @Module({
   imports: [
@@ -16,8 +15,7 @@ import { HttpModule } from '@nestjs/axios';
         },
       ],
     }),
-    TerminusModule,
-    HttpModule,
+    HealthCheckModule,
   ],
   controllers: [AppController],
   providers: [
