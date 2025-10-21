@@ -4,6 +4,7 @@ import { AppService } from './app.service';
 import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 import { APP_GUARD } from '@nestjs/core';
 import { HealthCheckModule } from './health-check/health-check.module';
+import { LoggerService } from './logger/logger.service';
 
 @Module({
   imports: [
@@ -20,6 +21,7 @@ import { HealthCheckModule } from './health-check/health-check.module';
   controllers: [AppController],
   providers: [
     AppService,
+    LoggerService,
     {
       provide: APP_GUARD,
       useClass: ThrottlerGuard,
