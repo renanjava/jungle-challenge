@@ -1,13 +1,10 @@
 {
-  "extends": "../tsconfig/base.json",
+  "extends": "./tsconfig.base.json",
   "compilerOptions": {
-    "outDir": "dist",
     "rootDir": "src",
+    "outDir": "dist",
     "declaration": true,
-    "declarationMap": true,
-    "lib": ["ES2020"],
-    "types": ["node"],
-    "baseUrl": "."
+    "declarationMap": true
   },
   "include": ["src/**/*"],
   "exclude": ["node_modules", "dist"]

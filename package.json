@@ -1,5 +1,5 @@
 {
-  "name": "jungle-challenge",
+  "name": "my-monorepo",
   "private": true,
   "scripts": {
     "build": "turbo run build",

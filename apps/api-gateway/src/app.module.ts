@@ -1,5 +1,4 @@
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
-import { envValidationSchema } from '@repo/shared-config';
+import { envValidationSchema } from '@my-monorepo/shared-config/';
 import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
@@ -22,7 +21,7 @@ import { ConfigModule } from '@nestjs/config';
     ConfigModule.forRoot({
       isGlobal: true,
       validationSchema: envValidationSchema,
-      envFilePath: './.env',
+      envFilePath: './../../packages/shared-config/.env',
     }),
     HealthCheckModule,
   ],
