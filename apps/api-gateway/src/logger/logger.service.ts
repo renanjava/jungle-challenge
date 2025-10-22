@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import * as pino from 'pino';
+import pino from 'pino';
 
 @Injectable()
 export class LoggerService {
