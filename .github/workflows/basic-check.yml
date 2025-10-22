@@ -2,7 +2,7 @@ name: "Verificação básica de código"
 
 on:
   push:
-    branches-ignore:
+    branches:
       - "main"
 
 jobs:
