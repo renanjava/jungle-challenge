@@ -23,7 +23,7 @@ export class User {
   @Column({ unique: true })
   username: string;
 
-  @Column({ select: false })
+  @Column()
   password: string;
 
   @CreateDateColumn({ name: 'created_at' })
