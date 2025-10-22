@@ -5,67 +5,70 @@ import { AppService } from './app.service';
 import { INestApplication } from '@nestjs/common';
 import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 import { APP_GUARD } from '@nestjs/core';
-import * as request from 'supertest';
+import request from 'supertest';
+import { LoggerModule } from './logger/logger.module';
+
+let app: INestApplication;
+let appController: AppController;
 
 describe('AppController', () => {
-  let appController: AppController;
+  beforeAll(() => {
+    process.env.LOG_LEVEL = 'info';
+  });
 
   beforeEach(async () => {
-    const app: TestingModule = await Test.createTestingModule({
+    const module: TestingModule = await Test.createTestingModule({
+      imports: [LoggerModule],
       controllers: [AppController],
       providers: [AppService],
     }).compile();
 
-    appController = app.get<AppController>(AppController);
+    appController = module.get<AppController>(AppController);
   });
 
-  describe('root', () => {
-    it('should return "Hello World!"', () => {
-      expect(appController.getHello()).toBe('Hello World!');
-    });
+  it('should return "Hello World!"', () => {
+    expect(appController.getHello()).toBe('Hello World!');
+  });
+});
+
+describe('AppController (e2e)', () => {
+  beforeAll(async () => {
+    process.env.LOG_LEVEL = 'info';
+
+    const moduleFixture: TestingModule = await Test.createTestingModule({
+      imports: [
+        ThrottlerModule.forRoot({
+          throttlers: [{ ttl: 1000, limit: 10 }],
+        }),
+        LoggerModule,
+      ],
+      controllers: [AppController],
+      providers: [
+        AppService,
+        {
+          provide: APP_GUARD,
+          useClass: ThrottlerGuard,
+        },
+      ],
+    }).compile();
+
+    app = moduleFixture.createNestApplication();
+    await app.init();
   });
 
-  describe('AppController (e2e)', () => {
-    let app: INestApplication;
+  it('should throttle requests', async () => {
+    const url = '/';
 
-    beforeAll(async () => {
-      const moduleFixture: TestingModule = await Test.createTestingModule({
-        imports: [
-          ThrottlerModule.forRoot({
-            throttlers: [
-              {
-                ttl: 1000,
-                limit: 10,
-              },
-            ],
-          }),
-        ],
-        controllers: [AppController],
-        providers: [
-          AppService,
-          {
-            provide: APP_GUARD,
-            useClass: ThrottlerGuard,
-          },
-        ],
-      }).compile();
+    for (let i = 0; i < 10; i++) {
+      await request(app.getHttpServer()).get(url).expect(200);
+    }
 
-      app = moduleFixture.createNestApplication();
-      await app.init();
-    });
+    await request(app.getHttpServer()).get(url).expect(429);
+  });
 
-    it('should throttle requests', async () => {
-      const url = '/';
-
-      for (let i = 0; i < 10; i++) {
-        await request(app.getHttpServer()).get(url).expect(200);
-      }
-
-      await request(app.getHttpServer()).get(url).expect(429);
-    });
-
-    afterAll(async () => {
+  afterAll(async () => {
+    if (app) {
       await app.close();
-    });
+    }
   });
 });

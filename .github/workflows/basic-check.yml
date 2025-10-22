@@ -1,0 +1,36 @@
+name: "Verificação básica de código"
+
+on:
+  push:
+    branches-ignore:
+      - "main"
+
+jobs:
+  basic-check:
+    runs-on: ubuntu-latest
+    env:
+      API_GATEWAY_PORT: ${{ secrets.API_GATEWAY_PORT }}
+      NODE_ENV: ${{ secrets.NODE_ENV }}
+      LOG_LEVEL: ${{ secrets.LOG_LEVEL }}
+
+    steps:
+      - name: Checkout do código
+        uses: actions/checkout@v4
+
+      - name: Configurar PNPM
+        uses: pnpm/action-setup@v3
+        with:
+          version: 9
+
+      - name: Configurar Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "18.19.0"
+          cache: "pnpm"
+
+      - name: Instalar dependências (raiz do monorepo)
+        run: pnpm install --frozen-lockfile
+
+      - name: Rodar testes da API Gateway
+        working-directory: ./apps/api-gateway
+        run: pnpm run test -- --coverage
