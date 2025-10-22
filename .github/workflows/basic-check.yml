@@ -33,4 +33,4 @@ jobs:
 
       - name: Rodar testes da API Gateway
         working-directory: ./apps/api-gateway
-        run: pnpm run test -- --coverage
+        run: pnpm run test
