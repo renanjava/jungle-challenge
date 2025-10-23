@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unsafe-call */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
-import { LoginDto } from './dto/login.dto';
+import { LoginDto } from '@my-monorepo/shared-dtos';
 import {
   BadRequestException,
   Injectable,
@@ -10,8 +10,8 @@ import {
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { User } from './entities/user.entity';
-import { RegisterDto } from './dto/register.dto';
-import { UpdateUserDto } from './dto/update-user.dto';
+import { RegisterDto } from '@my-monorepo/shared-dtos';
+import { UpdateUserDto } from '@my-monorepo/shared-dtos';
 import * as bcrypt from 'bcrypt';
 
 @Injectable()

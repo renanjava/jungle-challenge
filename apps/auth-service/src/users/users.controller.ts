@@ -9,9 +9,9 @@ import {
   ParseUUIDPipe,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
-import { RegisterDto } from './dto/register.dto';
-import { UpdateUserDto } from './dto/update-user.dto';
-import { LoginDto } from './dto/login.dto';
+import { RegisterDto } from '@my-monorepo/shared-dtos';
+import { UpdateUserDto } from '@my-monorepo/shared-dtos';
+import { LoginDto } from '@my-monorepo/shared-dtos';
 import { LoggerService } from '@my-monorepo/shared-logger';
 
 @Controller('users')
