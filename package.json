@@ -9,7 +9,8 @@
     "check-types": "turbo run check-types",
     "dev:all": "turbo run dev --parallel",
     "dev:gateway": "pnpm --filter api-gateway start:dev",
-    "dev:auth": "pnpm --filter auth-service start:dev"
+    "dev:auth": "pnpm --filter auth-service start:dev",
+    "test": "turbo run test"
   },
   "devDependencies": {
     "@nestjs/common": "11.1.7",
