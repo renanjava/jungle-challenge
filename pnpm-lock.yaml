@@ -195,6 +195,9 @@ importers:
       '@my-monorepo/shared-config':
         specifier: '*'
         version: link:../../packages/shared-config
+      '@my-monorepo/shared-logger':
+        specifier: '*'
+        version: link:../../packages/shared-logger
       '@nestjs/cli':
         specifier: ^11.0.0
         version: 11.0.0(@swc/cli@0.6.0)(@swc/core@1.10.7)(@types/node@22.10.7)

@@ -6,6 +6,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule } from '@nestjs/config';
 import { UsersModule } from './users/users.module';
 import { User } from './users/entities/user.entity';
+import { LoggerModule } from '@my-monorepo/shared-logger';
 
 @Module({
   imports: [
@@ -23,6 +24,10 @@ import { User } from './users/entities/user.entity';
       database: process.env.AUTH_DB_NAME,
       entities: [User],
       synchronize: false,
+    }),
+    LoggerModule.forRoot({
+      level: process.env.LOG_LEVEL,
+      serviceName: 'AUTH_SERVICE',
     }),
     UsersModule,
   ],
