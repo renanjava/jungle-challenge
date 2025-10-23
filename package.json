@@ -12,6 +12,14 @@
     "dev:auth": "pnpm --filter auth-service start:dev"
   },
   "devDependencies": {
+    "@nestjs/common": "11.1.7",
+    "@nestjs/core": "11.1.7",
+    "@nestjs/microservices": "11.1.7",
+    "@nestjs/platform-express": "11.1.7",
+    "@nestjs/mapped-types": "2.0.4",
+    "class-transformer": "0.5.1",
+    "class-validator": "0.14.2",
+    "reflect-metadata": "0.2.2",
     "prettier": "^3.6.2",
     "turbo": "^2.5.8",
     "typescript": "5.9.2"

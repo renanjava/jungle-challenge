@@ -11,14 +11,9 @@
     "dev": "tsc --watch"
   },
   "dependencies": {
-    "@my-monorepo/shared-config": "*",
-    "@nestjs/common": "^11.1.7",
-    "@nestjs/mapped-types": "*",
-    "class-transformer": "^0.5.1",
-    "class-validator": "^0.14.2"
+    "@my-monorepo/shared-config": "*"
   },
   "devDependencies": {
-    "@types/node": "^20.0.0",
-    "typescript": "^5.0.0"
+    "@types/node": "^20.0.0"
   }
 }
