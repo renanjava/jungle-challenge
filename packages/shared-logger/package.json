@@ -1,0 +1,23 @@
+{
+  "name": "@my-monorepo/shared-logger",
+  "version": "1.0.0",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch"
+  },
+  "dependencies": {
+    "@nestjs/common": "^11.0.1",
+    "pino": "^8.16.0",
+    "pino-pretty": "^10.2.0",
+    "@my-monorepo/shared-config": "*"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "typescript": "^5.0.0"
+  }
+}

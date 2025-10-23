@@ -1,3 +1,6 @@
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+/* eslint-disable @typescript-eslint/no-unsafe-call */
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import { envValidationSchema } from '@my-monorepo/shared-config/';
 import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
@@ -5,11 +8,15 @@ import { AppService } from './app.service';
 import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 import { APP_GUARD } from '@nestjs/core';
 import { HealthCheckModule } from './health-check/health-check.module';
-import { LoggerService } from './logger/logger.service';
 import { ConfigModule } from '@nestjs/config';
+import { LoggerModule } from '@my-monorepo/shared-logger';
 
 @Module({
   imports: [
+    LoggerModule.forRoot({
+      level: process.env.LOG_LEVEL,
+      serviceName: 'API_GATEWAY',
+    }),
     ThrottlerModule.forRoot({
       throttlers: [
         {
@@ -28,7 +35,6 @@ import { ConfigModule } from '@nestjs/config';
   controllers: [AppController],
   providers: [
     AppService,
-    LoggerService,
     {
       provide: APP_GUARD,
       useClass: ThrottlerGuard,

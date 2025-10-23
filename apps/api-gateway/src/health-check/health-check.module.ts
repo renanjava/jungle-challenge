@@ -1,12 +1,21 @@
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+/* eslint-disable @typescript-eslint/no-unsafe-call */
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import { Module } from '@nestjs/common';
 import { TerminusModule } from '@nestjs/terminus';
 import { HttpModule } from '@nestjs/axios';
 import { HealthCheckController } from './health-check.controller';
-import { LoggerService } from '../logger/logger.service';
+import { LoggerModule } from '@my-monorepo/shared-logger';
 
 @Module({
-  imports: [TerminusModule, HttpModule],
-  providers: [LoggerService],
+  imports: [
+    TerminusModule,
+    HttpModule,
+    LoggerModule.forRoot({
+      level: process.env.LOG_LEVEL,
+      serviceName: 'API_GATEWAY',
+    }),
+  ],
   controllers: [HealthCheckController],
 })
 export class HealthCheckModule {}

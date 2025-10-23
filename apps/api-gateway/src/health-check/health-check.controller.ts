@@ -1,10 +1,12 @@
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+/* eslint-disable @typescript-eslint/no-unsafe-call */
 import { Controller, Get } from '@nestjs/common';
 import {
   HealthCheck,
   HealthCheckService,
   HttpHealthIndicator,
 } from '@nestjs/terminus';
-import { LoggerService } from '../logger/logger.service';
+import { LoggerService } from '@my-monorepo/shared-logger';
 
 @Controller('health-check')
 export class HealthCheckController {

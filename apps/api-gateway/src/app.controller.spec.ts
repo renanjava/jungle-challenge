@@ -1,3 +1,6 @@
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+/* eslint-disable @typescript-eslint/no-unsafe-call */
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 /* eslint-disable @typescript-eslint/no-unsafe-argument */
 import { Test, TestingModule } from '@nestjs/testing';
 import { AppController } from './app.controller';
@@ -6,7 +9,7 @@ import { INestApplication } from '@nestjs/common';
 import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 import { APP_GUARD } from '@nestjs/core';
 import request from 'supertest';
-import { LoggerModule } from './logger/logger.module';
+import { LoggerModule } from '@my-monorepo/shared-logger';
 
 let app: INestApplication;
 let appController: AppController;
@@ -18,7 +21,12 @@ describe('AppController', () => {
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      imports: [LoggerModule],
+      imports: [
+        LoggerModule.forRoot({
+          level: process.env.LOG_LEVEL,
+          serviceName: 'API_GATEWAY',
+        }),
+      ],
       controllers: [AppController],
       providers: [AppService],
     }).compile();
@@ -40,7 +48,10 @@ describe('AppController (e2e)', () => {
         ThrottlerModule.forRoot({
           throttlers: [{ ttl: 1000, limit: 10 }],
         }),
-        LoggerModule,
+        LoggerModule.forRoot({
+          level: process.env.LOG_LEVEL,
+          serviceName: 'API_GATEWAY',
+        }),
       ],
       controllers: [AppController],
       providers: [

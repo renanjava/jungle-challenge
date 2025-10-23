@@ -1,6 +1,8 @@
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+/* eslint-disable @typescript-eslint/no-unsafe-call */
 import { Controller, Get } from '@nestjs/common';
 import { AppService } from './app.service';
-import { LoggerService } from './logger/logger.service';
+import { LoggerService } from '@my-monorepo/shared-logger';
 
 @Controller()
 export class AppController {
