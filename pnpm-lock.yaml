@@ -19,6 +19,9 @@ importers:
       '@nestjs/platform-express':
         specifier: 11.1.7
         version: 11.1.7(@nestjs/common@11.1.7)(@nestjs/core@11.1.7)
+      '@nestjs/swagger':
+        specifier: ^11.2.1
+        version: 11.2.1(@nestjs/common@11.1.7)(@nestjs/core@11.1.7)(class-transformer@0.5.1)(class-validator@0.14.2)(reflect-metadata@0.2.2)
       class-transformer:
         specifier: 0.5.1
         version: 0.5.1
@@ -46,9 +49,6 @@ importers:
       '@nestjs/config':
         specifier: ^4.0.2
         version: 4.0.2(@nestjs/common@11.1.7)(rxjs@7.8.1)
-      '@nestjs/swagger':
-        specifier: ^11.2.1
-        version: 11.2.1(@nestjs/common@11.1.7)(@nestjs/core@11.1.7)(class-transformer@0.5.1)(class-validator@0.14.2)(reflect-metadata@0.2.2)
       '@nestjs/terminus':
         specifier: ^11.0.0
         version: 11.0.0(@nestjs/axios@4.0.1)(@nestjs/common@11.1.7)(@nestjs/core@11.1.7)(@nestjs/microservices@11.1.7)(reflect-metadata@0.2.2)(rxjs@7.8.1)
@@ -1422,7 +1422,7 @@ packages:
 
   /@microsoft/tsdoc@0.15.1:
     resolution: {integrity: sha512-4aErSrCR/On/e5G2hDP0wjooqDdauzEbIq8hIkIe5pXV0rtWJZvdCEKL0ykZxex+IxIwBp0eGeV48hQN07dXtw==}
-    dev: false
+    dev: true
 
   /@napi-rs/nice-android-arm-eabi@1.1.1:
     resolution: {integrity: sha512-kjirL3N6TnRPv5iuHw36wnucNqXAO46dzK9oPb0wj076R5Xm8PfUVA9nAFB5ZNMmfJQJVKACAPd/Z2KYMppthw==}
@@ -1760,7 +1760,7 @@ packages:
       class-transformer: 0.5.1
       class-validator: 0.14.2
       reflect-metadata: 0.2.2
-    dev: false
+    dev: true
 
   /@nestjs/microservices@11.1.7(@nestjs/common@11.1.7)(@nestjs/core@11.1.7)(reflect-metadata@0.2.2)(rxjs@7.8.1):
     resolution: {integrity: sha512-Oc+Uqsx5Br0aCZOaQ4n+ykiI3q1nUNZ2zwM6WRxVYG5BWfeicXS0b68abg9LRblLmRJ5pX7NynE86YKNuN20nQ==}
@@ -1864,7 +1864,7 @@ packages:
       path-to-regexp: 8.3.0
       reflect-metadata: 0.2.2
       swagger-ui-dist: 5.29.4
-    dev: false
+    dev: true
 
   /@nestjs/terminus@11.0.0(@nestjs/axios@4.0.1)(@nestjs/common@11.1.7)(@nestjs/core@11.1.7)(@nestjs/microservices@11.1.7)(reflect-metadata@0.2.2)(rxjs@7.8.1):
     resolution: {integrity: sha512-c55LOo9YGovmQHtFUMa/vDaxGZ2cglMTZejqgHREaApt/GArTfgYYGwhRXPLq8ZwiQQlLuYB+79e9iA8mlDSLA==}
@@ -2030,7 +2030,7 @@ packages:
   /@scarf/scarf@1.4.0:
     resolution: {integrity: sha512-xxeapPiUXdZAE3che6f3xogoJPeZgig6omHEy1rIY5WVsB3H2BHNnZH+gHG6x91SCWyQCzWGsuL2Hh3ClO5/qQ==}
     requiresBuild: true
-    dev: false
+    dev: true
 
   /@sideway/address@4.1.5:
     resolution: {integrity: sha512-IqO/DUQHUkPeixNQ8n0JA6102hT9CmaljNTPmQ1u8MEhBo/R4Q8eKLN/vGZxuebwOroDB4cbpjheD4+/sKFK4Q==}
@@ -3008,6 +3008,7 @@ packages:
 
   /argparse@2.0.1:
     resolution: {integrity: sha512-8+9WqebbFzpX9OR+Wa6O29asIogeRMzcGtAINdpMHHyAg10f05aSFVBbcEqGf/PXw1EjAZ+q2/bEBg3DvurK3Q==}
+    dev: true
 
   /array-timsort@1.0.3:
     resolution: {integrity: sha512-/+3GRL7dDAGEfM6TseQk/U+mi18TU2Ms9I3UlLdUMhz2hbvGNTKdj9xniwXfUqgYhHxRx0+8UnKkvlNwVU+cWQ==}
@@ -5295,6 +5296,7 @@ packages:
     hasBin: true
     dependencies:
       argparse: 2.0.1
+    dev: true
 
   /jsesc@3.1.0:
     resolution: {integrity: sha512-/sM3dO2FOzXjKQhJuo0Q173wf2KOo8t4I8vHy6lF9poUp7bKT0/NHE8fPX23PwfhnykfqnC2xRxOnVw5XuGIaA==}
@@ -6736,7 +6738,7 @@ packages:
     resolution: {integrity: sha512-gJFDz/gyLOCQtWwAgqs6Rk78z9ONnqTnlW11gimG9nLap8drKa3AJBKpzIQMIjl5PD2Ix+Tn+mc/tfoT2tgsng==}
     dependencies:
       '@scarf/scarf': 1.4.0
-    dev: false
+    dev: true
 
   /symbol-observable@4.0.0:
     resolution: {integrity: sha512-b19dMThMV4HVFynSAM1++gBHAbk2Tc/osgLIBZMKsyqh34jb2e8Os7T6ZW/Bt3pJFdBTd2JwAnAAEQV7rSNvcQ==}
