@@ -9,10 +9,6 @@ let app: INestApplication;
 let appController: AppController;
 
 describe('AppController', () => {
-  beforeAll(() => {
-    process.env.LOG_LEVEL = 'info';
-  });
-
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       imports: [AppModule],
@@ -28,8 +24,6 @@ describe('AppController', () => {
 
 describe('AppController (e2e)', () => {
   beforeAll(async () => {
-    process.env.LOG_LEVEL = 'info';
-
     const moduleFixture: TestingModule = await Test.createTestingModule({
       imports: [AppModule],
     }).compile();
