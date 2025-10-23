@@ -1,6 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
-/* eslint-disable @typescript-eslint/no-unsafe-call */
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import { envValidationSchema } from '@my-monorepo/shared-config/';
 import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
@@ -10,6 +7,7 @@ import { APP_GUARD } from '@nestjs/core';
 import { HealthCheckModule } from './health-check/health-check.module';
 import { ConfigModule } from '@nestjs/config';
 import { LoggerModule } from '@my-monorepo/shared-logger';
+import { ClientsModule, Transport } from '@nestjs/microservices';
 
 @Module({
   imports: [
@@ -31,6 +29,23 @@ import { LoggerModule } from '@my-monorepo/shared-logger';
       envFilePath: './../../packages/shared-config/.env',
     }),
     HealthCheckModule,
+    ClientsModule.register([
+      {
+        name: 'AUTH_SERVICE',
+        transport: Transport.RMQ,
+        options: {
+          urls: [process.env.RABBITMQ_URL],
+          queue: 'auth_queue',
+          queueOptions: {
+            durable: true,
+          },
+          socketOptions: {
+            heartbeatIntervalInSeconds: 60,
+            reconnectTimeInSeconds: 5,
+          },
+        },
+      },
+    ]),
   ],
   controllers: [AppController],
   providers: [

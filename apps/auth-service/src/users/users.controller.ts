@@ -1,18 +1,12 @@
-import {
-  Controller,
-  Get,
-  Post,
-  Body,
-  Patch,
-  Param,
-  Delete,
-  ParseUUIDPipe,
-} from '@nestjs/common';
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
+import { Controller } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { RegisterDto } from '@my-monorepo/shared-dtos';
 import { UpdateUserDto } from '@my-monorepo/shared-dtos';
 import { LoginDto } from '@my-monorepo/shared-dtos';
 import { LoggerService } from '@my-monorepo/shared-logger';
+import { MessagePattern, Payload, RpcException } from '@nestjs/microservices';
 
 @Controller('users')
 export class UsersController {
@@ -21,42 +15,82 @@ export class UsersController {
     private readonly logger: LoggerService,
   ) {}
 
-  @Post()
-  create(@Body() registerDto: RegisterDto) {
+  @MessagePattern({ cmd: 'create_user' })
+  async create(@Payload() registerDto: RegisterDto) {
     this.logger.log("(POST) - Path '/' do UsersController");
-    return this.usersService.create(registerDto);
+    try {
+      return await this.usersService.create(registerDto);
+    } catch (error) {
+      throw new RpcException({
+        statusCode: error.status || 500,
+        message: error.message || 'Erro ao criar usuário',
+      });
+    }
   }
 
-  @Get()
-  findAll() {
+  @MessagePattern({ cmd: 'find_all_users' })
+  async findAll() {
     this.logger.log("(GET) - Path '/' do UsersController");
-    return this.usersService.findAll();
+    try {
+      return await this.usersService.findAll();
+    } catch (error) {
+      throw new RpcException({
+        statusCode: error.status || 500,
+        message: error.message || 'Erro ao buscar usuários',
+      });
+    }
   }
 
-  @Post('login')
-  login(@Body() loginDto: LoginDto) {
+  @MessagePattern({ cmd: 'login_user' })
+  async login(@Payload() loginDto: LoginDto) {
     this.logger.log("(POST) - Path '/login' do UsersController");
-    return this.usersService.login(loginDto);
+    try {
+      return await this.usersService.login(loginDto);
+    } catch (error) {
+      throw new RpcException({
+        statusCode: error.status || 500,
+        message: error.message || 'Erro ao fazer login',
+      });
+    }
   }
 
-  @Get(':id')
-  findOne(@Param('id', new ParseUUIDPipe()) id: string) {
+  @MessagePattern({ cmd: 'find_user' })
+  async findOne(@Payload() id: string) {
     this.logger.log("(GET) - Path '/:id' do UsersController");
-    return this.usersService.findOne(id);
+    try {
+      return await this.usersService.findOne(id);
+    } catch (error) {
+      throw new RpcException({
+        statusCode: error.status || 500,
+        message: error.message || 'Erro ao buscar usuário',
+      });
+    }
   }
 
-  @Patch(':id')
-  update(
-    @Param('id', new ParseUUIDPipe()) id: string,
-    @Body() updateUserDto: UpdateUserDto,
-  ) {
+  @MessagePattern({ cmd: 'update_user' })
+  async update(@Payload() data: { id: string; updateUserDto: UpdateUserDto }) {
     this.logger.log("(PATCH) - Path '/:id' do UsersController");
-    return this.usersService.update(id, updateUserDto);
+    try {
+      return await this.usersService.update(data.id, data.updateUserDto);
+    } catch (error) {
+      throw new RpcException({
+        statusCode: error.status || 500,
+        message: error.message || 'Erro ao atualizar usuário',
+      });
+    }
   }
 
-  @Delete(':id')
-  remove(@Param('id', new ParseUUIDPipe()) id: string) {
+  @MessagePattern({ cmd: 'delete_user' })
+  async remove(@Payload() id: string) {
     this.logger.log("(Delete) - Path '/:id' do UsersController");
-    return this.usersService.remove(id);
+    try {
+      await this.usersService.remove(id);
+      return { message: 'Usuário removido com sucesso' };
+    } catch (error) {
+      throw new RpcException({
+        statusCode: error.status || 500,
+        message: error.message || 'Erro ao remover usuário',
+      });
+    }
   }
 }

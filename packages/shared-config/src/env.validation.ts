@@ -12,4 +12,5 @@ export const envValidationSchema = Joi.object({
   DB_USER: Joi.string().required().default("postgres"),
   DB_PASS: Joi.string().required().default("postgres"),
   AUTH_DB_NAME: Joi.string().required().default("auth-db"),
+  RABBITMQ_URL: Joi.string().required().default("amqp://localhost:5672"),
 });

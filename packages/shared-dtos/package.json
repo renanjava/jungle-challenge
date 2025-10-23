@@ -12,7 +12,7 @@
   },
   "dependencies": {
     "@my-monorepo/shared-config": "*",
-    "@nestjs/common": "^11.0.1",
+    "@nestjs/common": "^11.1.7",
     "@nestjs/mapped-types": "*",
     "class-transformer": "^0.5.1",
     "class-validator": "^0.14.2"
