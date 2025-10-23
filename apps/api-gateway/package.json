@@ -79,6 +79,11 @@
       "**/*.(t|j)s"
     ],
     "coverageDirectory": "../coverage",
-    "testEnvironment": "node"
+    "testEnvironment": "node",
+    "moduleNameMapper": {
+      "^@my-monorepo/shared-dtos$": "<rootDir>/../../../packages/shared-dtos/src",
+      "^@my-monorepo/shared-logger$": "<rootDir>/../../../packages/shared-logger/src",
+      "^@my-monorepo/shared-config$": "<rootDir>/../../../packages/shared-config/src"
+    }
   }
 }
