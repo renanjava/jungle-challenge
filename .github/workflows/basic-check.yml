@@ -31,5 +31,8 @@ jobs:
       - name: Instalar dependências (raiz do monorepo)
         run: pnpm install --frozen-lockfile
 
+      - name: Build de todos os pacotes
+        run: pnpm run build
+
       - name: Rodar testes da API Gateway
         run: pnpm --filter api-gateway test
