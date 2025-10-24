@@ -16,7 +16,7 @@ import {
 import { AppService } from './app.service';
 import { LoggerService } from '@my-monorepo/shared-logger';
 import { catchError, firstValueFrom, throwError } from 'rxjs';
-import { LoginDto, RegisterDto } from '@my-monorepo/shared-dtos';
+import { CreateTaskDto, LoginDto, RegisterDto } from '@my-monorepo/shared-dtos';
 import { ClientProxy } from '@nestjs/microservices';
 import { ApiTags } from '@nestjs/swagger';
 import { AppJwtService } from './jwt/app-jwt.service';
@@ -29,6 +29,8 @@ export class AppController {
     private readonly appService: AppService,
     private readonly logger: LoggerService,
     @Inject('AUTH_SERVICE') private readonly authClient: ClientProxy,
+    @Inject('TASKS_SERVICE') private readonly tasksClient: ClientProxy,
+
     private readonly appJwt: AppJwtService,
   ) {}
 
@@ -81,5 +83,24 @@ export class AppController {
   @UseGuards(JwtRefreshGuard)
   refreshToken(@Req() req: any) {
     return this.appJwt.refreshAccessToken(req);
+  }
+
+  @Post('tasks')
+  async createTask(@Body() createTaskDto: CreateTaskDto) {
+    return await firstValueFrom(
+      this.tasksClient
+        .send({ cmd: 'task.created' }, createTaskDto)
+        .pipe(
+          catchError((error) =>
+            throwError(
+              () =>
+                new HttpException(
+                  error.message || 'Erro ao tentar criar Task',
+                  error.statusCode || HttpStatus.INTERNAL_SERVER_ERROR,
+                ),
+            ),
+          ),
+        ),
+    );
   }
 }

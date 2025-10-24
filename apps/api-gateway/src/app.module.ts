@@ -47,6 +47,21 @@ import { AppJwtModule } from './jwt/app-jwt.module';
           },
         },
       },
+      {
+        name: 'TASKS_SERVICE',
+        transport: Transport.RMQ,
+        options: {
+          urls: [process.env.RABBITMQ_URL],
+          queue: 'tasks_queue',
+          queueOptions: {
+            durable: true,
+          },
+          socketOptions: {
+            heartbeatIntervalInSeconds: 60,
+            reconnectTimeInSeconds: 5,
+          },
+        },
+      },
     ]),
   ],
   controllers: [AppController],

@@ -1,6 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
-/* eslint-disable @typescript-eslint/no-unsafe-call */
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
@@ -15,13 +12,10 @@ import { Comment } from './comments/entities/comment.entity';
 import { TaskAudit } from './task-audit/entities/task-audit.entity';
 import { envValidationSchema } from '@my-monorepo/shared-config/';
 import { ConfigModule } from '@nestjs/config';
+import { LoggerModule } from '@my-monorepo/shared-logger';
 
 @Module({
   imports: [
-    TasksModule,
-    TaskAssignmentModule,
-    CommentsModule,
-    TaskAuditModule,
     ConfigModule.forRoot({
       isGlobal: true,
       validationSchema: envValidationSchema,
@@ -37,6 +31,14 @@ import { ConfigModule } from '@nestjs/config';
       entities: [Task, TaskAssignment, Comment, TaskAudit],
       synchronize: false,
     }),
+    LoggerModule.forRoot({
+      level: process.env.LOG_LEVEL,
+      serviceName: 'TASKS_SERVICE',
+    }),
+    TasksModule,
+    TaskAssignmentModule,
+    CommentsModule,
+    TaskAuditModule,
   ],
   controllers: [AppController],
   providers: [AppService],

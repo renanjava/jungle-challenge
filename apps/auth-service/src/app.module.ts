@@ -10,6 +10,10 @@ import { LoggerModule } from '@my-monorepo/shared-logger';
 
 @Module({
   imports: [
+    LoggerModule.forRoot({
+      level: process.env.LOG_LEVEL,
+      serviceName: 'AUTH_SERVICE',
+    }),
     ConfigModule.forRoot({
       isGlobal: true,
       validationSchema: envValidationSchema,
@@ -24,10 +28,6 @@ import { LoggerModule } from '@my-monorepo/shared-logger';
       database: process.env.AUTH_DB_NAME,
       entities: [User],
       synchronize: false,
-    }),
-    LoggerModule.forRoot({
-      level: process.env.LOG_LEVEL,
-      serviceName: 'AUTH_SERVICE',
     }),
     UsersModule,
   ],

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import {
   Entity,
   PrimaryGeneratedColumn,
@@ -9,20 +10,7 @@ import {
 import { TaskAudit } from '../../task-audit/entities/task-audit.entity';
 import { TaskAssignment } from '../../task-assignment/entities/task-assignment.entity';
 import { Comment } from '../../comments/entities/comment.entity';
-
-export enum TaskPriority {
-  LOW = 'LOW',
-  MEDIUM = 'MEDIUM',
-  HIGH = 'HIGH',
-  URGENT = 'URGENT',
-}
-
-export enum TaskStatus {
-  TODO = 'TODO',
-  IN_PROGRESS = 'IN_PROGRESS',
-  REVIEW = 'REVIEW',
-  DONE = 'DONE',
-}
+import { TaskPriority, TaskStatus } from '@my-monorepo/shared-dtos';
 
 @Entity('tasks')
 export class Task {
