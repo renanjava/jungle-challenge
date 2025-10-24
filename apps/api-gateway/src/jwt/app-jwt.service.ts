@@ -34,7 +34,7 @@ export class AppJwtService {
   async generateRefreshToken(payload: Record<string, any>) {
     return await this.jwtService.signAsync(payload, {
       secret: this.configService.get('JWT_REFRESH_SECRET'),
-      expiresIn: '15m',
+      expiresIn: '7d',
     });
   }
 }
