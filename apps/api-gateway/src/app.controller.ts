@@ -10,6 +10,8 @@ import {
   HttpStatus,
   Inject,
   Post,
+  Req,
+  UseGuards,
 } from '@nestjs/common';
 import { AppService } from './app.service';
 import { LoggerService } from '@my-monorepo/shared-logger';
@@ -18,6 +20,7 @@ import { LoginDto, RegisterDto } from '@my-monorepo/shared-dtos';
 import { ClientProxy } from '@nestjs/microservices';
 import { ApiTags } from '@nestjs/swagger';
 import { AppJwtService } from './jwt/app-jwt.service';
+import { JwtRefreshGuard } from './jwt/guards/jwt-refresh.guard';
 
 @Controller('api')
 @ApiTags('API_GATEWAY')
@@ -71,6 +74,12 @@ export class AppController {
           ),
         ),
     );
-    return await this.appJwt.signIn(userResponse.id, userResponse.username);
+    return await this.appJwt.signIn(userResponse.id, userResponse.email);
+  }
+
+  @Post('auth/refresh')
+  @UseGuards(JwtRefreshGuard)
+  refreshToken(@Req() req: any) {
+    return this.appJwt.refreshAccessToken(req);
   }
 }
