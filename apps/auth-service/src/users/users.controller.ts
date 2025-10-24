@@ -18,7 +18,7 @@ export class UsersController {
   async create(@Payload() registerDto: RegisterDto) {
     this.logger.log("(POST) - Path '/' do UsersController");
     try {
-      return await this.usersService.create(registerDto);
+      return await this.usersService.register(registerDto);
     } catch (error) {
       throw new RpcException({
         statusCode: error.status || 500,

@@ -20,7 +20,7 @@ export class UsersService {
     private usersRepository: Repository<User>,
   ) {}
 
-  async create(dto: RegisterDto): Promise<User> {
+  async register(dto: RegisterDto): Promise<User> {
     const user = this.usersRepository.create(dto);
     return this.usersRepository.save(user);
   }

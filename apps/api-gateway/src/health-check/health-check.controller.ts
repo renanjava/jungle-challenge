@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
-/* eslint-disable @typescript-eslint/no-unsafe-call */
 import { Controller, Get } from '@nestjs/common';
 import {
   HealthCheck,
@@ -21,7 +19,7 @@ export class HealthCheckController {
   check() {
     this.logger.log("Path '/' do HealthCheckController");
     return this.health.check([
-      () => this.http.pingCheck('api-gateway', 'http://localhost:3001'),
+      () => this.http.pingCheck('api-gateway', 'http://localhost:3001/api'),
     ]);
   }
 }

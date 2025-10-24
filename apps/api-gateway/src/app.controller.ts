@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-unsafe-argument */
 /* eslint-disable @typescript-eslint/no-unsafe-return */
@@ -16,6 +17,7 @@ import { catchError, firstValueFrom, throwError } from 'rxjs';
 import { LoginDto, RegisterDto } from '@my-monorepo/shared-dtos';
 import { ClientProxy } from '@nestjs/microservices';
 import { ApiTags } from '@nestjs/swagger';
+import { AppJwtService } from './jwt/app-jwt.service';
 
 @Controller('api')
 @ApiTags('API_GATEWAY')
@@ -24,6 +26,7 @@ export class AppController {
     private readonly appService: AppService,
     private readonly logger: LoggerService,
     @Inject('AUTH_SERVICE') private readonly authClient: ClientProxy,
+    private readonly appJwt: AppJwtService,
   ) {}
 
   @Get()
@@ -53,7 +56,7 @@ export class AppController {
 
   @Post('auth/login')
   async login(@Body() loginDto: LoginDto) {
-    return firstValueFrom(
+    const userResponse = await firstValueFrom(
       this.authClient
         .send({ cmd: 'login_user' }, loginDto)
         .pipe(
@@ -68,5 +71,6 @@ export class AppController {
           ),
         ),
     );
+    return await this.appJwt.signIn(userResponse.id, userResponse.username);
   }
 }

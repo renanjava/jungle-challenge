@@ -8,6 +8,7 @@ import { HealthCheckModule } from './health-check/health-check.module';
 import { ConfigModule } from '@nestjs/config';
 import { LoggerModule } from '@my-monorepo/shared-logger';
 import { ClientsModule, Transport } from '@nestjs/microservices';
+import { AppJwtModule } from './jwt/app-jwt.module';
 
 @Module({
   imports: [
@@ -28,6 +29,7 @@ import { ClientsModule, Transport } from '@nestjs/microservices';
       validationSchema: envValidationSchema,
       envFilePath: './../../packages/shared-config/.env',
     }),
+    AppJwtModule,
     HealthCheckModule,
     ClientsModule.register([
       {
