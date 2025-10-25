@@ -42,7 +42,8 @@ export class TasksService {
     return await this.findById(id);
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} task`;
+  async remove(id: string) {
+    await this.findById(id);
+    return await this.tasksRepository.delete(id);
   }
 }

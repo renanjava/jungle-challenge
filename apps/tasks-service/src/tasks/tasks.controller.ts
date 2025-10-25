@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unsafe-argument */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
-import { Controller, Param, Delete } from '@nestjs/common';
+import { Controller } from '@nestjs/common';
 import { TasksService } from './tasks.service';
 import { CreateTaskDto } from '@my-monorepo/shared-dtos';
 import { MessagePattern, Payload, RpcException } from '@nestjs/microservices';
@@ -66,8 +66,16 @@ export class TasksController {
     }
   }
 
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.tasksService.remove(+id);
+  @MessagePattern({ cmd: 'task.deleted' })
+  async remove(@Payload() id: string) {
+    this.logger.log("(DELETE) - Path '/tasks/:id' do TasksController");
+    try {
+      return await this.tasksService.remove(id);
+    } catch (error) {
+      throw new RpcException({
+        statusCode: error.status || 500,
+        message: error.message || 'Erro ao deletar tarefa',
+      });
+    }
   }
 }

@@ -5,6 +5,7 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   HttpException,
   HttpStatus,
@@ -24,7 +25,6 @@ import {
   LoginDto,
   RegisterDto,
   CreateTaskAssignmentDto,
-  UpdateTaskAssignmentDto,
   UpdateTaskDto,
 } from '@my-monorepo/shared-dtos';
 import { ClientProxy } from '@nestjs/microservices';
@@ -165,7 +165,26 @@ export class AppController {
             throwError(
               () =>
                 new HttpException(
-                  error.message || 'Erro ao tentar buscar todas Task',
+                  error.message || 'Erro ao tentar atualizar uma Task',
+                  error.statusCode || HttpStatus.INTERNAL_SERVER_ERROR,
+                ),
+            ),
+          ),
+        ),
+    );
+  }
+
+  @Delete('tasks/:id')
+  async deleteTask(@Param('id') id: string) {
+    return await firstValueFrom(
+      this.tasksClient
+        .send({ cmd: 'task.deleted' }, id)
+        .pipe(
+          catchError((error) =>
+            throwError(
+              () =>
+                new HttpException(
+                  error.message || 'Erro ao tentar deletar uma Task',
                   error.statusCode || HttpStatus.INTERNAL_SERVER_ERROR,
                 ),
             ),
