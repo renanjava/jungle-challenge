@@ -87,7 +87,7 @@ export class AppController {
 
   @Post('tasks')
   async createTask(@Body() createTaskDto: CreateTaskDto) {
-    await firstValueFrom(
+    /*await firstValueFrom(
       this.authClient
         .send({ cmd: 'get-user-id' }, createTaskDto.created_by_user_id)
         .pipe(
@@ -102,7 +102,7 @@ export class AppController {
             ),
           ),
         ),
-    );
+    );*/
     return await firstValueFrom(
       this.tasksClient
         .send({ cmd: 'task.created' }, createTaskDto)

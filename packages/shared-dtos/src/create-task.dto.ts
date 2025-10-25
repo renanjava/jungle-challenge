@@ -17,14 +17,6 @@ export enum TaskStatus {
 }
 
 export class CreateTaskDto {
-  @IsNotEmpty()
-  @IsUUID()
-  @ApiProperty({
-    description: "ID do usuário (UUID)",
-    example: "c75f7c66-e858-47d6-bb82-7ea5547c800c",
-  })
-  created_by_user_id: string;
-
   @IsString()
   @IsNotEmpty()
   @ApiProperty({

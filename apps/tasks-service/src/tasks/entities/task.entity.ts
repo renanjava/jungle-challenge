@@ -17,9 +17,6 @@ export class Task {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Column({ type: 'uuid' })
-  created_by_user_id: string;
-
   @Column()
   title: string;
 
