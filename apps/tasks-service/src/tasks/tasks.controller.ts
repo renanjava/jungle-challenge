@@ -1,6 +1,7 @@
+/* eslint-disable @typescript-eslint/no-unsafe-argument */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
-import { Controller, Get, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Body, Patch, Param, Delete } from '@nestjs/common';
 import { TasksService } from './tasks.service';
 import { CreateTaskDto } from '@my-monorepo/shared-dtos';
 import { UpdateTaskDto } from '@my-monorepo/shared-dtos';
@@ -27,9 +28,17 @@ export class TasksController {
     }
   }
 
-  @Get()
-  findAll() {
-    return this.tasksService.findAll();
+  @MessagePattern({ cmd: 'get-all-task' })
+  async findAll(@Payload() { page, size }: Record<string, any>) {
+    this.logger.log("(GET) - Path '/tasks' do TasksController");
+    try {
+      return await this.tasksService.findAll(page, size);
+    } catch (error) {
+      throw new RpcException({
+        statusCode: error.status || 500,
+        message: error.message || 'Erro ao buscar tarefa',
+      });
+    }
   }
 
   @MessagePattern({ cmd: 'get-task-id' })

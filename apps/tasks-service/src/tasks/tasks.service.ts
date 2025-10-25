@@ -15,8 +15,21 @@ export class TasksService {
     return this.tasksRepository.save(createTaskDto);
   }
 
-  findAll() {
-    return `This action returns all tasks`;
+  async findAll(page = 1, size = 10) {
+    const query = this.tasksRepository
+      .createQueryBuilder('tasks')
+      .skip((page - 1) * size)
+      .take(size);
+
+    const [data, total] = await query.getManyAndCount();
+
+    return {
+      data,
+      total,
+      page,
+      size,
+      totalPages: Math.ceil(total / size),
+    };
   }
 
   findById(id: string) {

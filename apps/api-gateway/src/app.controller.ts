@@ -10,6 +10,7 @@ import {
   HttpStatus,
   Inject,
   Post,
+  Query,
   Req,
   UseGuards,
 } from '@nestjs/common';
@@ -92,22 +93,6 @@ export class AppController {
 
   @Post('tasks')
   async createTask(@Body() createTaskDto: CreateTaskDto) {
-    /*await firstValueFrom(
-      this.authClient
-        .send({ cmd: 'get-user-id' }, createTaskDto.created_by_user_id)
-        .pipe(
-          catchError((error) =>
-            throwError(
-              () =>
-                new HttpException(
-                  error.message ||
-                    `Erro ao tentar buscar usuário com o id ${createTaskDto.created_by_user_id}`,
-                  error.statusCode || HttpStatus.INTERNAL_SERVER_ERROR,
-                ),
-            ),
-          ),
-        ),
-    );*/
     return await firstValueFrom(
       this.tasksClient
         .send({ cmd: 'task.created' }, createTaskDto)
@@ -117,6 +102,25 @@ export class AppController {
               () =>
                 new HttpException(
                   error.message || 'Erro ao tentar criar Task',
+                  error.statusCode || HttpStatus.INTERNAL_SERVER_ERROR,
+                ),
+            ),
+          ),
+        ),
+    );
+  }
+
+  @Get('tasks')
+  async findAllTask(@Query('page') page: string, @Query('size') size: string) {
+    return await firstValueFrom(
+      this.tasksClient
+        .send({ cmd: 'get-all-task' }, { page, size })
+        .pipe(
+          catchError((error) =>
+            throwError(
+              () =>
+                new HttpException(
+                  error.message || 'Erro ao tentar buscar todas Task',
                   error.statusCode || HttpStatus.INTERNAL_SERVER_ERROR,
                 ),
             ),
