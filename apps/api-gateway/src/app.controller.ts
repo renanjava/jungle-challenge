@@ -9,6 +9,7 @@ import {
   HttpException,
   HttpStatus,
   Inject,
+  Param,
   Post,
   Query,
   Req,
@@ -102,6 +103,25 @@ export class AppController {
               () =>
                 new HttpException(
                   error.message || 'Erro ao tentar criar Task',
+                  error.statusCode || HttpStatus.INTERNAL_SERVER_ERROR,
+                ),
+            ),
+          ),
+        ),
+    );
+  }
+
+  @Get('tasks/:id')
+  async findByIdTask(@Param('id') id: string) {
+    return await firstValueFrom(
+      this.tasksClient
+        .send({ cmd: 'get-task-id' }, id)
+        .pipe(
+          catchError((error) =>
+            throwError(
+              () =>
+                new HttpException(
+                  error.message || 'Erro ao tentar buscar uma Task',
                   error.statusCode || HttpStatus.INTERNAL_SERVER_ERROR,
                 ),
             ),
