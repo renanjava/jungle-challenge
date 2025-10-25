@@ -16,7 +16,12 @@ import {
 import { AppService } from './app.service';
 import { LoggerService } from '@my-monorepo/shared-logger';
 import { catchError, firstValueFrom, throwError } from 'rxjs';
-import { CreateTaskDto, LoginDto, RegisterDto } from '@my-monorepo/shared-dtos';
+import {
+  CreateTaskDto,
+  LoginDto,
+  RegisterDto,
+  CreateTaskAssignmentDto,
+} from '@my-monorepo/shared-dtos';
 import { ClientProxy } from '@nestjs/microservices';
 import { ApiTags } from '@nestjs/swagger';
 import { AppJwtService } from './jwt/app-jwt.service';
@@ -112,6 +117,60 @@ export class AppController {
               () =>
                 new HttpException(
                   error.message || 'Erro ao tentar criar Task',
+                  error.statusCode || HttpStatus.INTERNAL_SERVER_ERROR,
+                ),
+            ),
+          ),
+        ),
+    );
+  }
+
+  @Post('tasks/assignment')
+  async createTaskAssignment(
+    @Body() createTaskAssignmentDto: CreateTaskAssignmentDto,
+  ) {
+    await firstValueFrom(
+      this.authClient
+        .send({ cmd: 'get-user-id' }, createTaskAssignmentDto.user_id)
+        .pipe(
+          catchError((error) =>
+            throwError(
+              () =>
+                new HttpException(
+                  error.message ||
+                    `Erro ao tentar buscar usuário com o id ${createTaskAssignmentDto.user_id}`,
+                  error.statusCode || HttpStatus.INTERNAL_SERVER_ERROR,
+                ),
+            ),
+          ),
+        ),
+    );
+    await firstValueFrom(
+      this.tasksClient
+        .send({ cmd: 'get-task-id' }, createTaskAssignmentDto.task_id)
+        .pipe(
+          catchError((error) =>
+            throwError(
+              () =>
+                new HttpException(
+                  error.message ||
+                    `Erro ao tentar buscar tarefa com o id ${createTaskAssignmentDto.task_id}`,
+                  error.statusCode || HttpStatus.INTERNAL_SERVER_ERROR,
+                ),
+            ),
+          ),
+        ),
+    );
+    return await firstValueFrom(
+      this.tasksClient
+        .send({ cmd: 'task-assignment.created' }, createTaskAssignmentDto)
+        .pipe(
+          catchError((error) =>
+            throwError(
+              () =>
+                new HttpException(
+                  error.message ||
+                    'Erro ao tentar vincular usuário à uma tarefa',
                   error.statusCode || HttpStatus.INTERNAL_SERVER_ERROR,
                 ),
             ),

@@ -32,9 +32,17 @@ export class TasksController {
     return this.tasksService.findAll();
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.tasksService.findOne(+id);
+  @MessagePattern({ cmd: 'get-task-id' })
+  async findById(@Payload() id: string) {
+    this.logger.log("(GET) - Path '/tasks/:id' do TasksController");
+    try {
+      return await this.tasksService.findById(id);
+    } catch (error) {
+      throw new RpcException({
+        statusCode: error.status || 500,
+        message: error.message || 'Erro ao buscar tarefa',
+      });
+    }
   }
 
   @Patch(':id')

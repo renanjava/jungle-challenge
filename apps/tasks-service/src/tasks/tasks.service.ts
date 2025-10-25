@@ -19,8 +19,8 @@ export class TasksService {
     return `This action returns all tasks`;
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} task`;
+  findById(id: string) {
+    return this.tasksRepository.findOneByOrFail({ id });
   }
 
   update(id: number, updateTaskDto: UpdateTaskDto) {
