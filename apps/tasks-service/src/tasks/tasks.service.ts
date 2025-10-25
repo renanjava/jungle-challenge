@@ -36,8 +36,10 @@ export class TasksService {
     return this.tasksRepository.findOneByOrFail({ id });
   }
 
-  update(id: number, updateTaskDto: UpdateTaskDto) {
-    return `This action updates a #${id} task`;
+  async update(id: string, updateTaskDto: UpdateTaskDto) {
+    await this.findById(id);
+    await this.tasksRepository.update(id, updateTaskDto);
+    return await this.findById(id);
   }
 
   remove(id: number) {

@@ -1,10 +1,9 @@
 /* eslint-disable @typescript-eslint/no-unsafe-argument */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
-import { Controller, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Param, Delete } from '@nestjs/common';
 import { TasksService } from './tasks.service';
 import { CreateTaskDto } from '@my-monorepo/shared-dtos';
-import { UpdateTaskDto } from '@my-monorepo/shared-dtos';
 import { MessagePattern, Payload, RpcException } from '@nestjs/microservices';
 import { LoggerService } from '@my-monorepo/shared-logger';
 
@@ -54,9 +53,17 @@ export class TasksController {
     }
   }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateTaskDto: UpdateTaskDto) {
-    return this.tasksService.update(+id, updateTaskDto);
+  @MessagePattern({ cmd: 'task.updated' })
+  async update(@Payload() { id, updateTaskDto }: Record<string, any>) {
+    this.logger.log("(PUT) - Path '/tasks/:id' do TasksController");
+    try {
+      return await this.tasksService.update(id, updateTaskDto);
+    } catch (error) {
+      throw new RpcException({
+        statusCode: error.status || 500,
+        message: error.message || 'Erro ao atualizar tarefa',
+      });
+    }
   }
 
   @Delete(':id')

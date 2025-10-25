@@ -11,6 +11,7 @@ import {
   Inject,
   Param,
   Post,
+  Put,
   Query,
   Req,
   UseGuards,
@@ -23,6 +24,8 @@ import {
   LoginDto,
   RegisterDto,
   CreateTaskAssignmentDto,
+  UpdateTaskAssignmentDto,
+  UpdateTaskDto,
 } from '@my-monorepo/shared-dtos';
 import { ClientProxy } from '@nestjs/microservices';
 import { ApiTags } from '@nestjs/swagger';
@@ -135,6 +138,28 @@ export class AppController {
     return await firstValueFrom(
       this.tasksClient
         .send({ cmd: 'get-all-task' }, { page, size })
+        .pipe(
+          catchError((error) =>
+            throwError(
+              () =>
+                new HttpException(
+                  error.message || 'Erro ao tentar buscar todas Task',
+                  error.statusCode || HttpStatus.INTERNAL_SERVER_ERROR,
+                ),
+            ),
+          ),
+        ),
+    );
+  }
+
+  @Put('tasks/:id')
+  async updateTask(
+    @Param('id') id: string,
+    @Body() updateTaskDto: UpdateTaskDto,
+  ) {
+    return await firstValueFrom(
+      this.tasksClient
+        .send({ cmd: 'task.updated' }, { id, updateTaskDto })
         .pipe(
           catchError((error) =>
             throwError(
