@@ -87,6 +87,22 @@ export class AppController {
 
   @Post('tasks')
   async createTask(@Body() createTaskDto: CreateTaskDto) {
+    await firstValueFrom(
+      this.authClient
+        .send({ cmd: 'get-user-id' }, createTaskDto.created_by_user_id)
+        .pipe(
+          catchError((error) =>
+            throwError(
+              () =>
+                new HttpException(
+                  error.message ||
+                    `Erro ao tentar buscar usuário com o id ${createTaskDto.created_by_user_id}`,
+                  error.statusCode || HttpStatus.INTERNAL_SERVER_ERROR,
+                ),
+            ),
+          ),
+        ),
+    );
     return await firstValueFrom(
       this.tasksClient
         .send({ cmd: 'task.created' }, createTaskDto)

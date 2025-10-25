@@ -45,4 +45,8 @@ export class UsersService {
     }
     return user;
   }
+
+  async findById(id: string) {
+    return await this.usersRepository.findOneByOrFail({ id });
+  }
 }

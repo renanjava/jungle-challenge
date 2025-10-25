@@ -16,7 +16,7 @@ export class UsersController {
 
   @MessagePattern({ cmd: 'register_user' })
   async create(@Payload() registerDto: RegisterDto) {
-    this.logger.log("(POST) - Path '/' do UsersController");
+    this.logger.log("(POST) - Path '/register' do UsersController");
     try {
       return await this.usersService.register(registerDto);
     } catch (error) {
@@ -36,6 +36,19 @@ export class UsersController {
       throw new RpcException({
         statusCode: error.status || 500,
         message: error.message || 'Erro ao fazer login',
+      });
+    }
+  }
+
+  @MessagePattern({ cmd: 'get-user-id' })
+  async findById(@Payload() id: string) {
+    this.logger.log("(GET) - Path '/user/:id' do UsersController");
+    try {
+      return await this.usersService.findById(id);
+    } catch (error) {
+      throw new RpcException({
+        statusCode: error.status || 500,
+        message: error.message || 'Erro ao buscar usuário',
       });
     }
   }
