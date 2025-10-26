@@ -1,9 +1,8 @@
-/* eslint-disable @typescript-eslint/no-unsafe-argument */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import { Controller } from '@nestjs/common';
 import { TasksService } from './tasks.service';
-import { CreateTaskDto } from '@my-monorepo/shared-dtos';
+import { CreateTaskDto, UpdateTaskDto } from '@my-monorepo/shared-dtos';
 import { MessagePattern, Payload, RpcException } from '@nestjs/microservices';
 import { LoggerService } from '@my-monorepo/shared-logger';
 
@@ -28,10 +27,10 @@ export class TasksController {
   }
 
   @MessagePattern({ cmd: 'get-all-task' })
-  async findAll(@Payload() { page, size }: Record<string, any>) {
+  async findAll(@Payload() payload: { page: number; size: number }) {
     this.logger.log("(GET) - Path '/tasks' do TasksController");
     try {
-      return await this.tasksService.findAll(page, size);
+      return await this.tasksService.findAll(payload.page, payload.size);
     } catch (error) {
       throw new RpcException({
         statusCode: error.status || 500,
@@ -54,10 +53,12 @@ export class TasksController {
   }
 
   @MessagePattern({ cmd: 'task.updated' })
-  async update(@Payload() { id, updateTaskDto }: Record<string, any>) {
+  async update(
+    @Payload() payload: { id: string; updateTaskDto: UpdateTaskDto },
+  ) {
     this.logger.log("(PUT) - Path '/tasks/:id' do TasksController");
     try {
-      return await this.tasksService.update(id, updateTaskDto);
+      return await this.tasksService.update(payload.id, payload.updateTaskDto);
     } catch (error) {
       throw new RpcException({
         statusCode: error.status || 500,
