@@ -95,6 +95,8 @@ export class AppController {
 
   @Delete('tasks/:id')
   @UseGuards(JwtAccessGuard)
+  @UseInterceptors(TaskAuditInterceptor)
+  @TaskAudit(TaskAuditAction.DELETE)
   async deleteTask(@Param('id') id: string) {
     return await this.appService.deleteOneTask(id);
   }

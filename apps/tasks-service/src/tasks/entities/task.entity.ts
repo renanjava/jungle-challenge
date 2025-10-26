@@ -6,7 +6,6 @@ import {
   UpdateDateColumn,
   OneToMany,
 } from 'typeorm';
-import { TaskAudit } from '../../task-audit/entities/task-audit.entity';
 import { TaskAssignment } from '../../task-assignment/entities/task-assignment.entity';
 import { Comment } from '../../comments/entities/comment.entity';
 import { TaskPriority, TaskStatus } from '@my-monorepo/shared-dtos';
@@ -36,9 +35,6 @@ export class Task {
     enum: TaskStatus,
   })
   status: TaskStatus;
-
-  @OneToMany(() => TaskAudit, (taskAudit) => taskAudit.task, { cascade: true })
-  taskAudits: TaskAudit[];
 
   @OneToMany(() => TaskAssignment, (taskAssignment) => taskAssignment.task, {
     cascade: true,

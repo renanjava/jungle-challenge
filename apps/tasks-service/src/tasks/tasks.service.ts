@@ -75,8 +75,9 @@ export class TasksService {
 
   async remove(id: string) {
     try {
-      await this.findById(id);
-      return await this.tasksRepository.delete(id);
+      const task = await this.findById(id);
+      await this.tasksRepository.delete(id);
+      return task;
     } catch (error) {
       throw new RpcException({
         statusCode: error.status || 500,

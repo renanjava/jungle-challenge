@@ -33,6 +33,7 @@ export class TaskAuditInterceptor implements NestInterceptor {
       context.getHandler(),
     );
     const request = context.switchToHttp().getRequest();
+    console.log({ request });
 
     const createTaskAuditDto: CreateTaskAuditDto = {
       user_id: request.user.userId,
@@ -42,18 +43,28 @@ export class TaskAuditInterceptor implements NestInterceptor {
       new_value: null,
     };
 
+    if (request.method === 'DELETE') {
+      createTaskAuditDto.task_id = request.params.id;
+    }
+
     return next.handle().pipe(
       tap(async (response) => {
         console.log({ response });
-        if (response.task_id || response.id) {
+
+        if (response.statusCode >= 400 && response.statusCode <= 502) {
+          /*this.logger.error(
+          'Erro ao tentar salvar o log da tarefa',
+          request.path),*/
+          return;
+        }
+        if ((response.task_id || response.id) && request.method != 'DELETE') {
           createTaskAuditDto.task_id = response.task_id ?? response.id;
           createTaskAuditDto.new_value = response;
-          return await this.appService.createTaskAudit(createTaskAuditDto);
         }
-        /*this.logger.error(
-          'Erro ao tentar salvar o log da tarefa',
-          request.path,
-        );*/
+        if (request.method === 'DELETE') {
+          createTaskAuditDto.old_value = response;
+        }
+        return await this.appService.createTaskAudit(createTaskAuditDto);
       }),
     );
   }

@@ -1,13 +1,9 @@
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import {
   Entity,
   PrimaryGeneratedColumn,
   Column,
   CreateDateColumn,
-  ManyToOne,
-  JoinColumn,
 } from 'typeorm';
-import { Task } from '../../tasks/entities/task.entity';
 import { TaskAuditAction } from '@my-monorepo/shared-dtos';
 
 @Entity('taskAudit')
@@ -17,10 +13,6 @@ export class TaskAudit {
 
   @Column({ type: 'uuid' })
   user_id: string;
-
-  @ManyToOne(() => Task, (task) => task.taskAudits, { onDelete: 'CASCADE' })
-  @JoinColumn({ name: 'task_id' })
-  task: Task;
 
   @Column({ type: 'uuid' })
   task_id: string;
