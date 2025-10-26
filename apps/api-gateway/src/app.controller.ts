@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-unsafe-return */
 import {
   Body,
@@ -102,6 +101,8 @@ export class AppController {
 
   @Post('tasks/assignment')
   @UseGuards(JwtAccessGuard)
+  @UseInterceptors(TaskAuditInterceptor)
+  @TaskAudit(TaskAuditAction.CREATE)
   async createTaskAssignment(
     @Body() createTaskAssignmentDto: CreateTaskAssignmentDto,
   ) {

@@ -1,9 +1,9 @@
+/* eslint-disable @typescript-eslint/no-unsafe-return */
+
 /* eslint-disable @typescript-eslint/no-misused-promises */
-import { CreateTaskAuditDto } from '@my-monorepo/shared-dtos';
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
-/* eslint-disable @typescript-eslint/no-redundant-type-constituents */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
-import { TaskAuditAction } from '@my-monorepo/shared-dtos';
+import { TaskAuditAction, CreateTaskAuditDto } from '@my-monorepo/shared-dtos';
 import {
   Injectable,
   NestInterceptor,
@@ -15,6 +15,7 @@ import { Reflector } from '@nestjs/core';
 import { Observable } from 'rxjs';
 import { tap } from 'rxjs/operators';
 import { AppService } from '../../app.service';
+//import { LoggerService } from '@my-monorepo/shared-logger';
 
 const TASK_AUDIT_KEY = 'taskAudit';
 
@@ -23,6 +24,7 @@ export class TaskAuditInterceptor implements NestInterceptor {
   constructor(
     private readonly reflector: Reflector,
     private readonly appService: AppService,
+    //private readonly logger: LoggerService,
   ) {}
 
   intercept(context: ExecutionContext, next: CallHandler): Observable<any> {
@@ -42,9 +44,16 @@ export class TaskAuditInterceptor implements NestInterceptor {
 
     return next.handle().pipe(
       tap(async (response) => {
-        createTaskAuditDto.task_id = response.id;
-        createTaskAuditDto.new_value = response;
-        await this.appService.createTaskAudit(createTaskAuditDto);
+        console.log({ response });
+        if (response.task_id || response.id) {
+          createTaskAuditDto.task_id = response.task_id ?? response.id;
+          createTaskAuditDto.new_value = response;
+          return await this.appService.createTaskAudit(createTaskAuditDto);
+        }
+        /*this.logger.error(
+          'Erro ao tentar salvar o log da tarefa',
+          request.path,
+        );*/
       }),
     );
   }
