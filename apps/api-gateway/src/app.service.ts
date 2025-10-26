@@ -8,8 +8,10 @@ import {
   UpdateTaskDto,
   CreateTaskAssignmentDto,
   CreateCommentDto,
+  CreateTaskAuditDto,
 } from '@my-monorepo/shared-dtos';
 import {
+  RABBITMQ_CREATE_TASK_AUDIT,
   RABBITMQ_GET_ALL_COMMENTS_BY_TASK,
   RABBITMQ_GET_ALL_TASK,
   RABBITMQ_GET_TASK_ID,
@@ -245,6 +247,25 @@ export class AppService {
                 new HttpException(
                   error.message ||
                     'Erro ao tentar buscar todos comentários de uma Task',
+                  error.statusCode || HttpStatus.INTERNAL_SERVER_ERROR,
+                ),
+            ),
+          ),
+        ),
+    );
+  }
+
+  async createTaskAudit(createTaskAuditDto: CreateTaskAuditDto) {
+    await this.getUserById(createTaskAuditDto.user_id);
+    return await firstValueFrom(
+      this.tasksClient
+        .send({ cmd: RABBITMQ_CREATE_TASK_AUDIT }, createTaskAuditDto)
+        .pipe(
+          catchError((error) =>
+            throwError(
+              () =>
+                new HttpException(
+                  error.message || 'Erro ao tentar salvar log na Audit Task',
                   error.statusCode || HttpStatus.INTERNAL_SERVER_ERROR,
                 ),
             ),

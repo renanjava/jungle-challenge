@@ -1,3 +1,6 @@
+/* eslint-disable @typescript-eslint/no-misused-promises */
+import { CreateTaskAuditDto } from '@my-monorepo/shared-dtos';
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-redundant-type-constituents */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import { TaskAuditAction } from '@my-monorepo/shared-dtos';
@@ -11,25 +14,39 @@ import {
 import { Reflector } from '@nestjs/core';
 import { Observable } from 'rxjs';
 import { tap } from 'rxjs/operators';
+import { AppService } from '../../app.service';
 
 const TASK_AUDIT_KEY = 'taskAudit';
 
 @Injectable()
 export class TaskAuditInterceptor implements NestInterceptor {
-  constructor(private readonly reflector: Reflector) {}
+  constructor(
+    private readonly reflector: Reflector,
+    private readonly appService: AppService,
+  ) {}
 
   intercept(context: ExecutionContext, next: CallHandler): Observable<any> {
     const action = this.reflector.get<TaskAuditAction | undefined>(
       TASK_AUDIT_KEY,
       context.getHandler(),
     );
+    const request = context.switchToHttp().getRequest();
 
-    console.log('Before...', action);
+    const createTaskAuditDto: CreateTaskAuditDto = {
+      user_id: request.user.userId,
+      task_id: '',
+      action,
+      old_value: null,
+      new_value: null,
+    };
 
-    const now = Date.now();
-    return next
-      .handle()
-      .pipe(tap(() => console.log(`After... ${Date.now() - now}ms`)));
+    return next.handle().pipe(
+      tap(async (response) => {
+        createTaskAuditDto.task_id = response.id;
+        createTaskAuditDto.new_value = response;
+        await this.appService.createTaskAudit(createTaskAuditDto);
+      }),
+    );
   }
 }
 

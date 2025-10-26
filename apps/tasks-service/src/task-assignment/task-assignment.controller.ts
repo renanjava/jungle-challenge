@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import { Controller, Get, Body, Patch, Param, Delete } from '@nestjs/common';
 import { TaskAssignmentService } from './task-assignment.service';
 import { CreateTaskAssignmentDto } from '@my-monorepo/shared-dtos';

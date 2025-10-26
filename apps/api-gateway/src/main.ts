@@ -20,6 +20,14 @@ async function bootstrap() {
     .setDescription('The Jungle Challenge API description')
     .setVersion('1.0')
     .addTag('jungle-gaming')
+    .addBearerAuth(
+      {
+        type: 'http',
+        scheme: 'bearer',
+        bearerFormat: 'JWT',
+      },
+      'jwt-access',
+    )
     .build();
   const documentFactory = () => SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api/docs', app, documentFactory);

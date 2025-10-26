@@ -24,16 +24,18 @@ import {
   CreateCommentDto,
   TaskAuditAction,
 } from '@my-monorepo/shared-dtos';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { AppJwtService } from './common/auth/app-jwt.service';
 import { JwtRefreshGuard } from './common/guards/jwt-refresh.guard';
 import {
   TaskAudit,
   TaskAuditInterceptor,
 } from './common/interceptors/task-audit.interceptor';
+import { JwtAccessGuard } from './common/guards/jwt-access.guard';
 
 @Controller('api')
 @ApiTags('API_GATEWAY')
+@ApiBearerAuth('jwt-access')
 export class AppController {
   constructor(
     private readonly appService: AppService,
@@ -66,21 +68,25 @@ export class AppController {
   @Post('tasks')
   @UseInterceptors(TaskAuditInterceptor)
   @TaskAudit(TaskAuditAction.CREATE)
+  @UseGuards(JwtAccessGuard)
   async createTask(@Body() createTaskDto: CreateTaskDto) {
     return await this.appService.createTasks(createTaskDto);
   }
 
   @Get('tasks/:id')
+  @UseGuards(JwtAccessGuard)
   async findByIdTask(@Param('id') id: string) {
     return await this.appService.findOneTask(id);
   }
 
   @Get('tasks')
+  @UseGuards(JwtAccessGuard)
   async findAllTask(@Query('page') page: number, @Query('size') size: number) {
     return await this.appService.findAllTasksWithPagination(page, size);
   }
 
   @Put('tasks/:id')
+  @UseGuards(JwtAccessGuard)
   async updateTask(
     @Param('id') id: string,
     @Body() updateTaskDto: UpdateTaskDto,
@@ -89,11 +95,13 @@ export class AppController {
   }
 
   @Delete('tasks/:id')
+  @UseGuards(JwtAccessGuard)
   async deleteTask(@Param('id') id: string) {
     return await this.appService.deleteOneTask(id);
   }
 
   @Post('tasks/assignment')
+  @UseGuards(JwtAccessGuard)
   async createTaskAssignment(
     @Body() createTaskAssignmentDto: CreateTaskAssignmentDto,
   ) {
@@ -101,6 +109,7 @@ export class AppController {
   }
 
   @Post('tasks/:id/comments')
+  @UseGuards(JwtAccessGuard)
   async createTaskComment(
     @Body() createCommentDto: CreateCommentDto,
     @Param('id') taskId: string,
@@ -109,6 +118,7 @@ export class AppController {
   }
 
   @Get('tasks/:id/comments')
+  @UseGuards(JwtAccessGuard)
   async findAllCommentsByTask(
     @Query('page') page: string,
     @Query('size') size: string,
