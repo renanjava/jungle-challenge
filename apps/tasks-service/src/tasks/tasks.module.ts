@@ -15,5 +15,6 @@ import { LoggerModule } from '@my-monorepo/shared-logger';
   ],
   controllers: [TasksController],
   providers: [TasksService],
+  exports: [TasksService],
 })
 export class TasksModule {}

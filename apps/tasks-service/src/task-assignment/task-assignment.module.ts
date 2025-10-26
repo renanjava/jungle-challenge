@@ -4,6 +4,7 @@ import { TaskAssignmentController } from './task-assignment.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { TaskAssignment } from './entities/task-assignment.entity';
 import { LoggerModule } from '@my-monorepo/shared-logger';
+import { TasksModule } from '../tasks/tasks.module';
 
 @Module({
   imports: [
@@ -12,6 +13,7 @@ import { LoggerModule } from '@my-monorepo/shared-logger';
       level: process.env.LOG_LEVEL,
       serviceName: 'TASKS_SERVICE',
     }),
+    TasksModule,
   ],
   controllers: [TaskAssignmentController],
   providers: [TaskAssignmentService],

@@ -1,14 +1,9 @@
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
-/* eslint-disable @typescript-eslint/no-unsafe-argument */
 /* eslint-disable @typescript-eslint/no-unsafe-return */
 import {
   Body,
   Controller,
   Delete,
   Get,
-  HttpException,
-  HttpStatus,
   Inject,
   Param,
   Post,
@@ -19,7 +14,6 @@ import {
 } from '@nestjs/common';
 import { AppService } from './app.service';
 import { LoggerService } from '@my-monorepo/shared-logger';
-import { catchError, firstValueFrom, throwError } from 'rxjs';
 import {
   CreateTaskDto,
   LoginDto,
@@ -41,7 +35,6 @@ export class AppController {
     private readonly logger: LoggerService,
     @Inject('AUTH_SERVICE') private readonly authClient: ClientProxy,
     @Inject('TASKS_SERVICE') private readonly tasksClient: ClientProxy,
-
     private readonly appJwt: AppJwtService,
   ) {}
 
@@ -53,41 +46,12 @@ export class AppController {
 
   @Post('auth/register')
   async register(@Body() registerDto: RegisterDto) {
-    return firstValueFrom(
-      this.authClient
-        .send({ cmd: 'register_user' }, registerDto)
-        .pipe(
-          catchError((error) =>
-            throwError(
-              () =>
-                new HttpException(
-                  error.message || 'Erro ao registrar usuário',
-                  error.statusCode || HttpStatus.INTERNAL_SERVER_ERROR,
-                ),
-            ),
-          ),
-        ),
-    );
+    return await this.appService.authUserRegister(registerDto);
   }
 
   @Post('auth/login')
   async login(@Body() loginDto: LoginDto) {
-    const userResponse = await firstValueFrom(
-      this.authClient
-        .send({ cmd: 'login_user' }, loginDto)
-        .pipe(
-          catchError((error) =>
-            throwError(
-              () =>
-                new HttpException(
-                  error.message || 'Erro ao tentar logar-se',
-                  error.statusCode || HttpStatus.INTERNAL_SERVER_ERROR,
-                ),
-            ),
-          ),
-        ),
-    );
-    return await this.appJwt.signIn(userResponse.id, userResponse.email);
+    return await this.appService.authUserLogin(loginDto);
   }
 
   @Post('auth/refresh')
@@ -98,59 +62,17 @@ export class AppController {
 
   @Post('tasks')
   async createTask(@Body() createTaskDto: CreateTaskDto) {
-    return await firstValueFrom(
-      this.tasksClient
-        .send({ cmd: 'task.created' }, createTaskDto)
-        .pipe(
-          catchError((error) =>
-            throwError(
-              () =>
-                new HttpException(
-                  error.message || 'Erro ao tentar criar Task',
-                  error.statusCode || HttpStatus.INTERNAL_SERVER_ERROR,
-                ),
-            ),
-          ),
-        ),
-    );
+    return await this.createTask(createTaskDto);
   }
 
   @Get('tasks/:id')
   async findByIdTask(@Param('id') id: string) {
-    return await firstValueFrom(
-      this.tasksClient
-        .send({ cmd: 'get-task-id' }, id)
-        .pipe(
-          catchError((error) =>
-            throwError(
-              () =>
-                new HttpException(
-                  error.message || 'Erro ao tentar buscar uma Task',
-                  error.statusCode || HttpStatus.INTERNAL_SERVER_ERROR,
-                ),
-            ),
-          ),
-        ),
-    );
+    return await this.appService.findOneTask(id);
   }
 
   @Get('tasks')
-  async findAllTask(@Query('page') page: string, @Query('size') size: string) {
-    return await firstValueFrom(
-      this.tasksClient
-        .send({ cmd: 'get-all-task' }, { page, size })
-        .pipe(
-          catchError((error) =>
-            throwError(
-              () =>
-                new HttpException(
-                  error.message || 'Erro ao tentar buscar todas Task',
-                  error.statusCode || HttpStatus.INTERNAL_SERVER_ERROR,
-                ),
-            ),
-          ),
-        ),
-    );
+  async findAllTask(@Query('page') page: number, @Query('size') size: number) {
+    return await this.appService.findAllTasksWithPagination(page, size);
   }
 
   @Put('tasks/:id')
@@ -158,94 +80,19 @@ export class AppController {
     @Param('id') id: string,
     @Body() updateTaskDto: UpdateTaskDto,
   ) {
-    return await firstValueFrom(
-      this.tasksClient
-        .send({ cmd: 'task.updated' }, { id, updateTaskDto })
-        .pipe(
-          catchError((error) =>
-            throwError(
-              () =>
-                new HttpException(
-                  error.message || 'Erro ao tentar atualizar uma Task',
-                  error.statusCode || HttpStatus.INTERNAL_SERVER_ERROR,
-                ),
-            ),
-          ),
-        ),
-    );
+    return await this.appService.updateOneTask(id, updateTaskDto);
   }
 
   @Delete('tasks/:id')
   async deleteTask(@Param('id') id: string) {
-    return await firstValueFrom(
-      this.tasksClient
-        .send({ cmd: 'task.deleted' }, id)
-        .pipe(
-          catchError((error) =>
-            throwError(
-              () =>
-                new HttpException(
-                  error.message || 'Erro ao tentar deletar uma Task',
-                  error.statusCode || HttpStatus.INTERNAL_SERVER_ERROR,
-                ),
-            ),
-          ),
-        ),
-    );
+    return await this.appService.deleteOneTask(id);
   }
 
   @Post('tasks/assignment')
   async createTaskAssignment(
     @Body() createTaskAssignmentDto: CreateTaskAssignmentDto,
   ) {
-    await firstValueFrom(
-      this.authClient
-        .send({ cmd: 'get-user-id' }, createTaskAssignmentDto.user_id)
-        .pipe(
-          catchError((error) =>
-            throwError(
-              () =>
-                new HttpException(
-                  error.message ||
-                    `Erro ao tentar buscar usuário com o id ${createTaskAssignmentDto.user_id}`,
-                  error.statusCode || HttpStatus.INTERNAL_SERVER_ERROR,
-                ),
-            ),
-          ),
-        ),
-    );
-    await firstValueFrom(
-      this.tasksClient
-        .send({ cmd: 'get-task-id' }, createTaskAssignmentDto.task_id)
-        .pipe(
-          catchError((error) =>
-            throwError(
-              () =>
-                new HttpException(
-                  error.message ||
-                    `Erro ao tentar buscar tarefa com o id ${createTaskAssignmentDto.task_id}`,
-                  error.statusCode || HttpStatus.INTERNAL_SERVER_ERROR,
-                ),
-            ),
-          ),
-        ),
-    );
-    return await firstValueFrom(
-      this.tasksClient
-        .send({ cmd: 'task-assignment.created' }, createTaskAssignmentDto)
-        .pipe(
-          catchError((error) =>
-            throwError(
-              () =>
-                new HttpException(
-                  error.message ||
-                    'Erro ao tentar vincular usuário à uma tarefa',
-                  error.statusCode || HttpStatus.INTERNAL_SERVER_ERROR,
-                ),
-            ),
-          ),
-        ),
-    );
+    return await this.appService.createTaskAssignment(createTaskAssignmentDto);
   }
 
   @Post('tasks/:id/comments')
@@ -253,53 +100,7 @@ export class AppController {
     @Body() createCommentDto: CreateCommentDto,
     @Param('id') taskId: string,
   ) {
-    await firstValueFrom(
-      this.authClient
-        .send({ cmd: 'get-user-id' }, createCommentDto.user_id)
-        .pipe(
-          catchError((error) =>
-            throwError(
-              () =>
-                new HttpException(
-                  error.message ||
-                    `Erro ao tentar buscar usuário com o id ${createCommentDto.user_id}`,
-                  error.statusCode || HttpStatus.INTERNAL_SERVER_ERROR,
-                ),
-            ),
-          ),
-        ),
-    );
-    await firstValueFrom(
-      this.tasksClient
-        .send({ cmd: 'get-task-id' }, taskId)
-        .pipe(
-          catchError((error) =>
-            throwError(
-              () =>
-                new HttpException(
-                  error.message ||
-                    `Erro ao tentar buscar tarefa com o id ${taskId}`,
-                  error.statusCode || HttpStatus.INTERNAL_SERVER_ERROR,
-                ),
-            ),
-          ),
-        ),
-    );
-    return await firstValueFrom(
-      this.tasksClient
-        .send({ cmd: 'task.comment.created' }, { createCommentDto, taskId })
-        .pipe(
-          catchError((error) =>
-            throwError(
-              () =>
-                new HttpException(
-                  error.message || 'Erro ao tentar criar Task',
-                  error.statusCode || HttpStatus.INTERNAL_SERVER_ERROR,
-                ),
-            ),
-          ),
-        ),
-    );
+    return await this.appService.createTaskComment(createCommentDto, taskId);
   }
 
   @Get('tasks/:id/comments')
@@ -308,37 +109,6 @@ export class AppController {
     @Query('size') size: string,
     @Param('id') taskId: string,
   ) {
-    await firstValueFrom(
-      this.tasksClient
-        .send({ cmd: 'get-task-id' }, taskId)
-        .pipe(
-          catchError((error) =>
-            throwError(
-              () =>
-                new HttpException(
-                  error.message ||
-                    `Erro ao tentar buscar tarefa com o id ${taskId}`,
-                  error.statusCode || HttpStatus.INTERNAL_SERVER_ERROR,
-                ),
-            ),
-          ),
-        ),
-    );
-    return await firstValueFrom(
-      this.tasksClient
-        .send({ cmd: 'get-all-tasks-comments-by-task' }, { page, size, taskId })
-        .pipe(
-          catchError((error) =>
-            throwError(
-              () =>
-                new HttpException(
-                  error.message ||
-                    'Erro ao tentar buscar todos comentários de uma Task',
-                  error.statusCode || HttpStatus.INTERNAL_SERVER_ERROR,
-                ),
-            ),
-          ),
-        ),
-    );
+    return await this.appService.findAllCommentsByTask(page, size, taskId);
   }
 }
