@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import {
   Entity,
   PrimaryGeneratedColumn,
@@ -7,14 +8,7 @@ import {
   JoinColumn,
 } from 'typeorm';
 import { Task } from '../../tasks/entities/task.entity';
-
-export enum TaskAuditAction {
-  CREATE = 'CREATE',
-  UPDATE = 'UPDATE',
-  DELETE = 'DELETE',
-  ASSIGN = 'ASSIGN',
-  STATUS_CHANGE = 'STATUS_CHANGE',
-}
+import { TaskAuditAction } from '@my-monorepo/shared-dtos';
 
 @Entity('taskAudit')
 export class TaskAudit {

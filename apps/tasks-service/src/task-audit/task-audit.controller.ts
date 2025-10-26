@@ -8,8 +8,8 @@ import {
   Delete,
 } from '@nestjs/common';
 import { TaskAuditService } from './task-audit.service';
-import { CreateTaskAuditDto } from './dto/create-task-audit.dto';
-import { UpdateTaskAuditDto } from './dto/update-task-audit.dto';
+import { CreateTaskAuditDto } from '@my-monorepo/shared-dtos';
+import { UpdateTaskAuditDto } from '@my-monorepo/shared-dtos';
 
 @Controller('task-audit')
 export class TaskAuditController {

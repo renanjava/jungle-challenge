@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-unsafe-return */
 import {
   Body,
@@ -10,6 +11,7 @@ import {
   Query,
   Req,
   UseGuards,
+  UseInterceptors,
 } from '@nestjs/common';
 import { AppService } from './app.service';
 import { LoggerService } from '@my-monorepo/shared-logger';
@@ -20,10 +22,15 @@ import {
   CreateTaskAssignmentDto,
   UpdateTaskDto,
   CreateCommentDto,
+  TaskAuditAction,
 } from '@my-monorepo/shared-dtos';
 import { ApiTags } from '@nestjs/swagger';
-import { AppJwtService } from './jwt/app-jwt.service';
-import { JwtRefreshGuard } from './jwt/guards/jwt-refresh.guard';
+import { AppJwtService } from './common/auth/app-jwt.service';
+import { JwtRefreshGuard } from './common/guards/jwt-refresh.guard';
+import {
+  TaskAudit,
+  TaskAuditInterceptor,
+} from './common/interceptors/task-audit.interceptor';
 
 @Controller('api')
 @ApiTags('API_GATEWAY')
@@ -57,8 +64,10 @@ export class AppController {
   }
 
   @Post('tasks')
+  @UseInterceptors(TaskAuditInterceptor)
+  @TaskAudit(TaskAuditAction.CREATE)
   async createTask(@Body() createTaskDto: CreateTaskDto) {
-    return await this.createTask(createTaskDto);
+    return await this.appService.createTasks(createTaskDto);
   }
 
   @Get('tasks/:id')

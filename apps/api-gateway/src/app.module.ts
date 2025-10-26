@@ -8,7 +8,8 @@ import { HealthCheckModule } from './health-check/health-check.module';
 import { ConfigModule } from '@nestjs/config';
 import { LoggerModule } from '@my-monorepo/shared-logger';
 import { ClientsModule, Transport } from '@nestjs/microservices';
-import { AppJwtModule } from './jwt/app-jwt.module';
+import { AppJwtModule } from './common/auth/app-jwt.module';
+import { TaskAuditInterceptor } from './common/interceptors/task-audit.interceptor';
 
 @Module({
   imports: [
@@ -67,6 +68,7 @@ import { AppJwtModule } from './jwt/app-jwt.module';
   controllers: [AppController],
   providers: [
     AppService,
+    TaskAuditInterceptor,
     {
       provide: APP_GUARD,
       useClass: ThrottlerGuard,

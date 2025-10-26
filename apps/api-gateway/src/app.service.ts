@@ -26,7 +26,7 @@ import { LoginDto } from '@my-monorepo/shared-dtos';
 import { HttpException, HttpStatus, Inject, Injectable } from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
 import { catchError, firstValueFrom, throwError } from 'rxjs';
-import { AppJwtService } from './jwt/app-jwt.service';
+import { AppJwtService } from './common/auth/app-jwt.service';
 
 @Injectable()
 export class AppService {
