@@ -6,7 +6,6 @@
 import { TaskAuditAction, CreateTaskAuditDto } from '@my-monorepo/shared-dtos';
 import {
   Injectable,
-  NestInterceptor,
   ExecutionContext,
   CallHandler,
   SetMetadata,
@@ -20,20 +19,22 @@ import { AppService } from '../../app.service';
 const TASK_AUDIT_KEY = 'taskAudit';
 
 @Injectable()
-export class TaskAuditInterceptor implements NestInterceptor {
+export class TaskAuditInterceptor {
   constructor(
     private readonly reflector: Reflector,
     private readonly appService: AppService,
     //private readonly logger: LoggerService,
   ) {}
 
-  intercept(context: ExecutionContext, next: CallHandler): Observable<any> {
+  async intercept(
+    context: ExecutionContext,
+    next: CallHandler,
+  ): Promise<Observable<any>> {
     const action = this.reflector.get<TaskAuditAction | undefined>(
       TASK_AUDIT_KEY,
       context.getHandler(),
     );
     const request = context.switchToHttp().getRequest();
-    console.log({ request });
 
     const createTaskAuditDto: CreateTaskAuditDto = {
       user_id: request.user.userId,
@@ -43,26 +44,40 @@ export class TaskAuditInterceptor implements NestInterceptor {
       new_value: null,
     };
 
-    if (request.method === 'DELETE') {
+    if (request.method != 'POST') {
       createTaskAuditDto.task_id = request.params.id;
+    }
+
+    if (action === TaskAuditAction.UPDATE) {
+      createTaskAuditDto.old_value = await this.appService.findOneTask(
+        createTaskAuditDto.task_id,
+      );
     }
 
     return next.handle().pipe(
       tap(async (response) => {
-        console.log({ response });
-
         if (response.statusCode >= 400 && response.statusCode <= 502) {
           /*this.logger.error(
           'Erro ao tentar salvar o log da tarefa',
           request.path),*/
           return;
         }
-        if ((response.task_id || response.id) && request.method != 'DELETE') {
+
+        if (request.method === 'DELETE') {
+          createTaskAuditDto.old_value = response;
+          return await this.appService.createTaskAudit(createTaskAuditDto);
+        }
+
+        if (response.task_id || response.id) {
           createTaskAuditDto.task_id = response.task_id ?? response.id;
           createTaskAuditDto.new_value = response;
         }
-        if (request.method === 'DELETE') {
-          createTaskAuditDto.old_value = response;
+
+        if (
+          createTaskAuditDto.old_value.status !=
+          createTaskAuditDto.new_value.status
+        ) {
+          createTaskAuditDto.action = TaskAuditAction.STATUS_CHANGE;
         }
         return await this.appService.createTaskAudit(createTaskAuditDto);
       }),

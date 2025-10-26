@@ -86,6 +86,8 @@ export class AppController {
 
   @Put('tasks/:id')
   @UseGuards(JwtAccessGuard)
+  @UseInterceptors(TaskAuditInterceptor)
+  @TaskAudit(TaskAuditAction.UPDATE)
   async updateTask(
     @Param('id') id: string,
     @Body() updateTaskDto: UpdateTaskDto,
@@ -104,7 +106,7 @@ export class AppController {
   @Post('tasks/assignment')
   @UseGuards(JwtAccessGuard)
   @UseInterceptors(TaskAuditInterceptor)
-  @TaskAudit(TaskAuditAction.CREATE)
+  @TaskAudit(TaskAuditAction.ASSIGN)
   async createTaskAssignment(
     @Body() createTaskAssignmentDto: CreateTaskAssignmentDto,
   ) {
