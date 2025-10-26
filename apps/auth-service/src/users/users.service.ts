@@ -12,6 +12,7 @@ import { Repository } from 'typeorm';
 import { User } from './entities/user.entity';
 import { RegisterDto } from '@my-monorepo/shared-dtos';
 import * as bcrypt from 'bcrypt';
+import { RpcException } from '@nestjs/microservices';
 
 @Injectable()
 export class UsersService {
@@ -21,32 +22,53 @@ export class UsersService {
   ) {}
 
   async register(dto: RegisterDto): Promise<User> {
-    const user = this.usersRepository.create(dto);
-    return this.usersRepository.save(user);
+    try {
+      const user = this.usersRepository.create(dto);
+      return this.usersRepository.save(user);
+    } catch (error) {
+      throw new RpcException({
+        statusCode: error.status || 500,
+        message: error.message || 'Erro ao criar usuário',
+      });
+    }
   }
 
   async login(loginDto: LoginDto): Promise<User> {
-    const user = await this.usersRepository.findOneBy({
-      email: loginDto.email,
-    });
+    try {
+      const user = await this.usersRepository.findOneBy({
+        email: loginDto.email,
+      });
 
-    if (!user) {
-      throw new NotFoundException(
-        `Nenhum usuário encontrado com o email: ${loginDto.email}`,
+      if (!user) {
+        throw new NotFoundException(
+          `Nenhum usuário encontrado com o email: ${loginDto.email}`,
+        );
+      }
+
+      const isValidPassword = await bcrypt.compare(
+        loginDto.password,
+        user.password,
       );
+      if (!isValidPassword) {
+        throw new BadRequestException(`Senha inválida`);
+      }
+      return user;
+    } catch (error) {
+      throw new RpcException({
+        statusCode: error.status || 500,
+        message: error.message || 'Erro ao fazer login',
+      });
     }
-
-    const isValidPassword = await bcrypt.compare(
-      loginDto.password,
-      user.password,
-    );
-    if (!isValidPassword) {
-      throw new BadRequestException(`Senha inválida`);
-    }
-    return user;
   }
 
   async findById(id: string) {
-    return await this.usersRepository.findOneByOrFail({ id });
+    try {
+      return await this.usersRepository.findOneByOrFail({ id });
+    } catch (error) {
+      throw new RpcException({
+        statusCode: error.status || 500,
+        message: error.message || 'Erro ao buscar usuário',
+      });
+    }
   }
 }

@@ -1,11 +1,9 @@
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import { Controller } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { RegisterDto } from '@my-monorepo/shared-dtos';
 import { LoginDto } from '@my-monorepo/shared-dtos';
 import { LoggerService } from '@my-monorepo/shared-logger';
-import { MessagePattern, Payload, RpcException } from '@nestjs/microservices';
+import { MessagePattern, Payload } from '@nestjs/microservices';
 
 @Controller('users')
 export class UsersController {
@@ -17,39 +15,18 @@ export class UsersController {
   @MessagePattern({ cmd: 'register_user' })
   async create(@Payload() registerDto: RegisterDto) {
     this.logger.log("(POST) - Path '/register' do UsersController");
-    try {
-      return await this.usersService.register(registerDto);
-    } catch (error) {
-      throw new RpcException({
-        statusCode: error.status || 500,
-        message: error.message || 'Erro ao criar usuário',
-      });
-    }
+    return await this.usersService.register(registerDto);
   }
 
   @MessagePattern({ cmd: 'login_user' })
   async login(@Payload() loginDto: LoginDto) {
     this.logger.log("(POST) - Path '/login' do UsersController");
-    try {
-      return await this.usersService.login(loginDto);
-    } catch (error) {
-      throw new RpcException({
-        statusCode: error.status || 500,
-        message: error.message || 'Erro ao fazer login',
-      });
-    }
+    return await this.usersService.login(loginDto);
   }
 
   @MessagePattern({ cmd: 'get-user-id' })
   async findById(@Payload() id: string) {
     this.logger.log("(GET) - Path '/user/:id' do UsersController");
-    try {
-      return await this.usersService.findById(id);
-    } catch (error) {
-      throw new RpcException({
-        statusCode: error.status || 500,
-        message: error.message || 'Erro ao buscar usuário',
-      });
-    }
+    return await this.usersService.findById(id);
   }
 }

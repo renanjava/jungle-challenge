@@ -4,7 +4,6 @@ import {
   Controller,
   Delete,
   Get,
-  Inject,
   Param,
   Post,
   Put,
@@ -22,7 +21,6 @@ import {
   UpdateTaskDto,
   CreateCommentDto,
 } from '@my-monorepo/shared-dtos';
-import { ClientProxy } from '@nestjs/microservices';
 import { ApiTags } from '@nestjs/swagger';
 import { AppJwtService } from './jwt/app-jwt.service';
 import { JwtRefreshGuard } from './jwt/guards/jwt-refresh.guard';
@@ -33,8 +31,6 @@ export class AppController {
   constructor(
     private readonly appService: AppService,
     private readonly logger: LoggerService,
-    @Inject('AUTH_SERVICE') private readonly authClient: ClientProxy,
-    @Inject('TASKS_SERVICE') private readonly tasksClient: ClientProxy,
     private readonly appJwt: AppJwtService,
   ) {}
 
