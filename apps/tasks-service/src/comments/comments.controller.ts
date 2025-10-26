@@ -1,8 +1,13 @@
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import { Controller } from '@nestjs/common';
 import { CommentsService } from './comments.service';
 import { CreateCommentDto } from '@my-monorepo/shared-dtos';
 import { MessagePattern, Payload } from '@nestjs/microservices';
 import { LoggerService } from '@my-monorepo/shared-logger';
+import {
+  RABBITMQ_GET_ALL_COMMENTS_BY_TASK,
+  RABBITMQ_TASK_COMMENT_CREATED,
+} from '@my-monorepo/shared-config';
 
 @Controller('comments')
 export class CommentsController {
@@ -11,7 +16,7 @@ export class CommentsController {
     private readonly logger: LoggerService,
   ) {}
 
-  @MessagePattern({ cmd: 'task.comment.created' })
+  @MessagePattern({ cmd: RABBITMQ_TASK_COMMENT_CREATED })
   async create(
     @Payload() payload: { createCommentDto: CreateCommentDto; taskId: string },
   ) {
@@ -22,7 +27,7 @@ export class CommentsController {
     );
   }
 
-  @MessagePattern({ cmd: 'get-all-tasks-comments-by-task' })
+  @MessagePattern({ cmd: RABBITMQ_GET_ALL_COMMENTS_BY_TASK })
   findAll(@Payload() payload: { page: number; size: number; taskId: string }) {
     this.logger.log(
       "(GET) - Path '/tasks/:id/comments?page=&size' do CommentsController",

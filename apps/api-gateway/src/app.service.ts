@@ -9,6 +9,19 @@ import {
   CreateTaskAssignmentDto,
   CreateCommentDto,
 } from '@my-monorepo/shared-dtos';
+import {
+  RABBITMQ_GET_ALL_COMMENTS_BY_TASK,
+  RABBITMQ_GET_ALL_TASK,
+  RABBITMQ_GET_TASK_ID,
+  RABBITMQ_GET_USER_ID,
+  RABBITMQ_LOGIN_USER,
+  RABBITMQ_REGISTER_USER,
+  RABBITMQ_TASK_ASSIGNMENT_CREATED,
+  RABBITMQ_TASK_COMMENT_CREATED,
+  RABBITMQ_TASK_CREATED,
+  RABBITMQ_TASK_DELETED,
+  RABBITMQ_TASK_UPDATED,
+} from '@my-monorepo/shared-config';
 import { LoginDto } from '@my-monorepo/shared-dtos';
 import { HttpException, HttpStatus, Inject, Injectable } from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
@@ -30,7 +43,7 @@ export class AppService {
   async getUserById(id: string) {
     return await firstValueFrom(
       this.authClient
-        .send({ cmd: 'get-user-id' }, id)
+        .send({ cmd: RABBITMQ_GET_USER_ID }, id)
         .pipe(
           catchError((error) =>
             throwError(
@@ -49,7 +62,7 @@ export class AppService {
   async authUserRegister(registerDto: RegisterDto) {
     return firstValueFrom(
       this.authClient
-        .send({ cmd: 'register_user' }, registerDto)
+        .send({ cmd: RABBITMQ_REGISTER_USER }, registerDto)
         .pipe(
           catchError((error) =>
             throwError(
@@ -67,7 +80,7 @@ export class AppService {
   async authUserLogin(loginDto: LoginDto) {
     const userResponse = await firstValueFrom(
       this.authClient
-        .send({ cmd: 'login_user' }, loginDto)
+        .send({ cmd: RABBITMQ_LOGIN_USER }, loginDto)
         .pipe(
           catchError((error) =>
             throwError(
@@ -86,7 +99,7 @@ export class AppService {
   async createTasks(createTaskDto: CreateTaskDto) {
     return await firstValueFrom(
       this.tasksClient
-        .send({ cmd: 'task.created' }, createTaskDto)
+        .send({ cmd: RABBITMQ_TASK_CREATED }, createTaskDto)
         .pipe(
           catchError((error) =>
             throwError(
@@ -104,7 +117,7 @@ export class AppService {
   async findOneTask(id: string) {
     return await firstValueFrom(
       this.tasksClient
-        .send({ cmd: 'get-task-id' }, id)
+        .send({ cmd: RABBITMQ_GET_TASK_ID }, id)
         .pipe(
           catchError((error) =>
             throwError(
@@ -122,7 +135,7 @@ export class AppService {
   async findAllTasksWithPagination(page: number, size: number) {
     return await firstValueFrom(
       this.tasksClient
-        .send({ cmd: 'get-all-task' }, { page, size })
+        .send({ cmd: RABBITMQ_GET_ALL_TASK }, { page, size })
         .pipe(
           catchError((error) =>
             throwError(
@@ -140,7 +153,7 @@ export class AppService {
   async updateOneTask(id: string, updateTaskDto: UpdateTaskDto) {
     return await firstValueFrom(
       this.tasksClient
-        .send({ cmd: 'task.updated' }, { id, updateTaskDto })
+        .send({ cmd: RABBITMQ_TASK_UPDATED }, { id, updateTaskDto })
         .pipe(
           catchError((error) =>
             throwError(
@@ -158,7 +171,7 @@ export class AppService {
   async deleteOneTask(id: string) {
     return await firstValueFrom(
       this.tasksClient
-        .send({ cmd: 'task.deleted' }, id)
+        .send({ cmd: RABBITMQ_TASK_DELETED }, id)
         .pipe(
           catchError((error) =>
             throwError(
@@ -177,7 +190,10 @@ export class AppService {
     await this.getUserById(createTaskAssignmentDto.user_id);
     return await firstValueFrom(
       this.tasksClient
-        .send({ cmd: 'task-assignment.created' }, createTaskAssignmentDto)
+        .send(
+          { cmd: RABBITMQ_TASK_ASSIGNMENT_CREATED },
+          createTaskAssignmentDto,
+        )
         .pipe(
           catchError((error) =>
             throwError(
@@ -197,7 +213,10 @@ export class AppService {
     await this.getUserById(createCommentDto.user_id);
     return await firstValueFrom(
       this.tasksClient
-        .send({ cmd: 'task.comment.created' }, { createCommentDto, taskId })
+        .send(
+          { cmd: RABBITMQ_TASK_COMMENT_CREATED },
+          { createCommentDto, taskId },
+        )
         .pipe(
           catchError((error) =>
             throwError(
@@ -215,7 +234,10 @@ export class AppService {
   async findAllCommentsByTask(page: string, size: string, taskId: string) {
     return await firstValueFrom(
       this.tasksClient
-        .send({ cmd: 'get-all-tasks-comments-by-task' }, { page, size, taskId })
+        .send(
+          { cmd: RABBITMQ_GET_ALL_COMMENTS_BY_TASK },
+          { page, size, taskId },
+        )
         .pipe(
           catchError((error) =>
             throwError(
