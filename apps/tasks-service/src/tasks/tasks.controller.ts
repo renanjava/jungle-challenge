@@ -28,7 +28,7 @@ export class TasksController {
 
   @MessagePattern({ cmd: 'get-all-task' })
   async findAll(@Payload() payload: { page: number; size: number }) {
-    this.logger.log("(GET) - Path '/tasks' do TasksController");
+    this.logger.log("(GET) - Path '/tasks?page=&size=' do TasksController");
     try {
       return await this.tasksService.findAll(payload.page, payload.size);
     } catch (error) {

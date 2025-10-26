@@ -301,4 +301,44 @@ export class AppController {
         ),
     );
   }
+
+  @Get('tasks/:id/comments')
+  async findAllCommentsByTask(
+    @Query('page') page: string,
+    @Query('size') size: string,
+    @Param('id') taskId: string,
+  ) {
+    await firstValueFrom(
+      this.tasksClient
+        .send({ cmd: 'get-task-id' }, taskId)
+        .pipe(
+          catchError((error) =>
+            throwError(
+              () =>
+                new HttpException(
+                  error.message ||
+                    `Erro ao tentar buscar tarefa com o id ${taskId}`,
+                  error.statusCode || HttpStatus.INTERNAL_SERVER_ERROR,
+                ),
+            ),
+          ),
+        ),
+    );
+    return await firstValueFrom(
+      this.tasksClient
+        .send({ cmd: 'get-all-tasks-comments-by-task' }, { page, size, taskId })
+        .pipe(
+          catchError((error) =>
+            throwError(
+              () =>
+                new HttpException(
+                  error.message ||
+                    'Erro ao tentar buscar todos comentários de uma Task',
+                  error.statusCode || HttpStatus.INTERNAL_SERVER_ERROR,
+                ),
+            ),
+          ),
+        ),
+    );
+  }
 }

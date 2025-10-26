@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
-import { Controller, Get } from '@nestjs/common';
+import { Controller } from '@nestjs/common';
 import { CommentsService } from './comments.service';
 import { CreateCommentDto } from '@my-monorepo/shared-dtos';
 import { MessagePattern, Payload, RpcException } from '@nestjs/microservices';
@@ -10,14 +10,14 @@ import { LoggerService } from '@my-monorepo/shared-logger';
 export class CommentsController {
   constructor(
     private readonly commentsService: CommentsService,
-    private readonly loggerService: LoggerService,
+    private readonly logger: LoggerService,
   ) {}
 
   @MessagePattern({ cmd: 'task.comment.created' })
   async create(
     @Payload() payload: { createCommentDto: CreateCommentDto; taskId: string },
   ) {
-    this.loggerService.log("(POST) - Path '/comments' do CommentsController");
+    this.logger.log("(POST) - Path '/comments' do CommentsController");
     try {
       return await this.commentsService.create(
         payload.taskId,
@@ -31,8 +31,22 @@ export class CommentsController {
     }
   }
 
-  @MessagePattern({ cmd: 'get-all-tasks-comments' })
-  findAll() {
-    return this.commentsService.findAll();
+  @MessagePattern({ cmd: 'get-all-tasks-comments-by-task' })
+  findAll(@Payload() payload: { page: number; size: number; taskId: string }) {
+    this.logger.log(
+      "(GET) - Path '/tasks/:id/comments?page=&size' do CommentsController",
+    );
+    try {
+      return this.commentsService.findAllByTaskId(
+        payload.page,
+        payload.size,
+        payload.taskId,
+      );
+    } catch (error) {
+      throw new RpcException({
+        statusCode: error.status || 500,
+        message: error.message || 'Erro ao buscar comentários',
+      });
+    }
   }
 }

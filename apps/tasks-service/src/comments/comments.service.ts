@@ -19,7 +19,21 @@ export class CommentsService {
     return await this.commentsRepository.save(commentEntity);
   }
 
-  findAll() {
-    return `This action returns all comments`;
+  async findAllByTaskId(page = 1, size = 10, taskId: string) {
+    const query = this.commentsRepository
+      .createQueryBuilder('comments')
+      .where({ task_id: taskId })
+      .skip((page - 1) * size)
+      .take(size);
+
+    const [data, total] = await query.getManyAndCount();
+
+    return {
+      data,
+      total,
+      page,
+      size,
+      totalPages: Math.ceil(total / size),
+    };
   }
 }
