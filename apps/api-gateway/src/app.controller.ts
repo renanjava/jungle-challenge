@@ -26,6 +26,7 @@ import {
   RegisterDto,
   CreateTaskAssignmentDto,
   UpdateTaskDto,
+  CreateCommentDto,
 } from '@my-monorepo/shared-dtos';
 import { ClientProxy } from '@nestjs/microservices';
 import { ApiTags } from '@nestjs/swagger';
@@ -239,6 +240,60 @@ export class AppController {
                 new HttpException(
                   error.message ||
                     'Erro ao tentar vincular usuário à uma tarefa',
+                  error.statusCode || HttpStatus.INTERNAL_SERVER_ERROR,
+                ),
+            ),
+          ),
+        ),
+    );
+  }
+
+  @Post('tasks/:id/comments')
+  async createTaskComment(
+    @Body() createCommentDto: CreateCommentDto,
+    @Param('id') taskId: string,
+  ) {
+    await firstValueFrom(
+      this.authClient
+        .send({ cmd: 'get-user-id' }, createCommentDto.user_id)
+        .pipe(
+          catchError((error) =>
+            throwError(
+              () =>
+                new HttpException(
+                  error.message ||
+                    `Erro ao tentar buscar usuário com o id ${createCommentDto.user_id}`,
+                  error.statusCode || HttpStatus.INTERNAL_SERVER_ERROR,
+                ),
+            ),
+          ),
+        ),
+    );
+    await firstValueFrom(
+      this.tasksClient
+        .send({ cmd: 'get-task-id' }, taskId)
+        .pipe(
+          catchError((error) =>
+            throwError(
+              () =>
+                new HttpException(
+                  error.message ||
+                    `Erro ao tentar buscar tarefa com o id ${taskId}`,
+                  error.statusCode || HttpStatus.INTERNAL_SERVER_ERROR,
+                ),
+            ),
+          ),
+        ),
+    );
+    return await firstValueFrom(
+      this.tasksClient
+        .send({ cmd: 'task.comment.created' }, { createCommentDto, taskId })
+        .pipe(
+          catchError((error) =>
+            throwError(
+              () =>
+                new HttpException(
+                  error.message || 'Erro ao tentar criar Task',
                   error.statusCode || HttpStatus.INTERNAL_SERVER_ERROR,
                 ),
             ),

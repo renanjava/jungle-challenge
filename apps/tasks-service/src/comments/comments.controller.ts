@@ -1,42 +1,29 @@
-import {
-  Controller,
-  Get,
-  Post,
-  Body,
-  Patch,
-  Param,
-  Delete,
-} from '@nestjs/common';
+import { Controller, Get, Post, Body } from '@nestjs/common';
 import { CommentsService } from './comments.service';
 import { CreateCommentDto } from '@my-monorepo/shared-dtos';
-import { UpdateCommentDto } from '@my-monorepo/shared-dtos';
+import { MessagePattern, Payload } from '@nestjs/microservices';
+import { LoggerService } from '@my-monorepo/shared-logger';
 
 @Controller('comments')
 export class CommentsController {
-  constructor(private readonly commentsService: CommentsService) {}
+  constructor(
+    private readonly commentsService: CommentsService,
+    private readonly loggerService: LoggerService,
+  ) {}
 
-  @Post()
-  create(@Body() createCommentDto: CreateCommentDto) {
-    return this.commentsService.create(createCommentDto);
+  @MessagePattern({ cmd: 'task.comment.created' })
+  create(
+    @Payload() payload: { createCommentDto: CreateCommentDto; taskId: string },
+  ) {
+    this.loggerService.log("(POST) - Path '/comments' do CommentsController");
+    return this.commentsService.create(
+      payload.taskId,
+      payload.createCommentDto,
+    );
   }
 
   @Get()
   findAll() {
     return this.commentsService.findAll();
-  }
-
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.commentsService.findOne(+id);
-  }
-
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateCommentDto: UpdateCommentDto) {
-    return this.commentsService.update(+id, updateCommentDto);
-  }
-
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.commentsService.remove(+id);
   }
 }

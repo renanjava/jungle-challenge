@@ -3,9 +3,16 @@ import { CommentsService } from './comments.service';
 import { CommentsController } from './comments.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Comment } from './entities/comment.entity';
+import { LoggerModule } from '@my-monorepo/shared-logger';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Comment])],
+  imports: [
+    TypeOrmModule.forFeature([Comment]),
+    LoggerModule.forRoot({
+      level: process.env.LOG_LEVEL,
+      serviceName: 'TASKS_SERVICE',
+    }),
+  ],
   controllers: [CommentsController],
   providers: [CommentsService],
 })
