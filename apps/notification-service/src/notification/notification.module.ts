@@ -4,15 +4,17 @@ import { NotificationGateway } from './notification.gateway';
 import { LoggerModule } from '@my-monorepo/shared-logger';
 import { Notification } from './entities/notification.entity';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { NotificationController } from './notification.controller';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([Notification]),
     LoggerModule.forRoot({
       level: process.env.LOG_LEVEL,
-      serviceName: 'NOTIFICATION_SERVICE',
+      serviceName: 'NOTIFICATIONS_SERVICE',
     }),
   ],
+  controllers: [NotificationController],
   providers: [NotificationGateway, NotificationService],
 })
 export class NotificationModule {}

@@ -1,7 +1,7 @@
 import { MigrationInterface, QueryRunner } from "typeorm";
 
-export class CreateNotificationsTable1761530898390 implements MigrationInterface {
-    name = 'CreateNotificationsTable1761530898390'
+export class CreateNotificationsTable1761541368757 implements MigrationInterface {
+    name = 'CreateNotificationsTable1761541368757'
 
     public async up(queryRunner: QueryRunner): Promise<void> {
         await queryRunner.query(`CREATE TYPE "public"."notifications_type_enum" AS ENUM('TASK_ASSIGNED', 'NEW_COMMENT', 'STATUS_CHANGE')`);

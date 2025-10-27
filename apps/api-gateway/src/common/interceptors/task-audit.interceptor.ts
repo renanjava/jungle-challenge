@@ -73,8 +73,8 @@ export class TaskAuditInterceptor {
         }
 
         if (
-          createTaskAuditDto.old_value.status !=
-            createTaskAuditDto.new_value.status &&
+          createTaskAuditDto.old_value?.status !=
+            createTaskAuditDto.new_value?.status &&
           createTaskAuditDto.action == 'UPDATE'
         ) {
           createTaskAuditDto.action = TaskAuditAction.STATUS_CHANGE;

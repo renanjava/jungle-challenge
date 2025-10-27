@@ -9,8 +9,10 @@ import {
   CreateTaskAssignmentDto,
   CreateCommentDto,
   CreateTaskAuditDto,
+  NotificationType,
 } from '@my-monorepo/shared-dtos';
 import {
+  RABBITMQ_CREATE_NOTIFICATION,
   RABBITMQ_CREATE_TASK_AUDIT,
   RABBITMQ_GET_ALL_COMMENTS_BY_TASK,
   RABBITMQ_GET_ALL_TASK,
@@ -35,6 +37,8 @@ export class AppService {
   constructor(
     @Inject('AUTH_SERVICE') private readonly authClient: ClientProxy,
     @Inject('TASKS_SERVICE') private readonly tasksClient: ClientProxy,
+    @Inject('NOTIFICATIONS_SERVICE')
+    private readonly notificationsClient: ClientProxy,
     private readonly appJwt: AppJwtService,
   ) {}
 
@@ -190,7 +194,7 @@ export class AppService {
 
   async createTaskAssignment(createTaskAssignmentDto: CreateTaskAssignmentDto) {
     await this.getUserById(createTaskAssignmentDto.user_id);
-    return await firstValueFrom(
+    const taskAssignment = await firstValueFrom(
       this.tasksClient
         .send(
           { cmd: RABBITMQ_TASK_ASSIGNMENT_CREATED },
@@ -209,6 +213,12 @@ export class AppService {
           ),
         ),
     );
+    this.notificationsClient.emit(RABBITMQ_CREATE_NOTIFICATION, {
+      user_id: taskAssignment.user_id,
+      type: NotificationType.TASK_ASSIGNED,
+      payload: { title: 'Um novo usuário foi atribuído à sua tarefa.' },
+    });
+    return taskAssignment;
   }
 
   async createTaskComment(createCommentDto: CreateCommentDto, taskId: string) {

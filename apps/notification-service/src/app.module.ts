@@ -12,7 +12,7 @@ import { Notification } from './notification/entities/notification.entity';
   imports: [
     LoggerModule.forRoot({
       level: process.env.LOG_LEVEL,
-      serviceName: 'NOTIFICATION_SERVICE',
+      serviceName: 'NOTIFICATIONS_SERVICE',
     }),
     ConfigModule.forRoot({
       isGlobal: true,

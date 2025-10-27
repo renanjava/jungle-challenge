@@ -63,6 +63,21 @@ import { TaskAuditInterceptor } from './common/interceptors/task-audit.intercept
           },
         },
       },
+      {
+        name: 'NOTIFICATIONS_SERVICE',
+        transport: Transport.RMQ,
+        options: {
+          urls: [process.env.RABBITMQ_URL],
+          queue: 'notifications_queue',
+          queueOptions: {
+            durable: true,
+          },
+          socketOptions: {
+            heartbeatIntervalInSeconds: 60,
+            reconnectTimeInSeconds: 5,
+          },
+        },
+      },
     ]),
   ],
   controllers: [AppController],

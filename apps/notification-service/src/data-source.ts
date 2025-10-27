@@ -11,7 +11,7 @@ export const AppDataSource = new DataSource({
   port: Number(process.env.DB_PORT),
   username: process.env.DB_USER,
   password: process.env.DB_PASS,
-  database: process.env.TASKS_DB_NAME,
+  database: process.env.NOTIFICATION_DB_NAME,
   entities: [Notification],
   migrations: ['src/migrations/*.ts'],
   migrationsTableName: 'migrations',
