@@ -21,6 +21,7 @@ jobs:
       DB_PASS: ${{ secrets.DB_PASS }}
       AUTH_DB_NAME: ${{ secrets.AUTH_DB_NAME }}
       TASKS_DB_NAME: ${{ secrets.TASKS_DB_NAME }}
+      NOTIFICATION_DB_NAME: ${{ secrets.NOTIFICATION_DB_NAME }}
 
       RABBITMQ_URL: ${{ secrets.RABBITMQ_URL }}
 
