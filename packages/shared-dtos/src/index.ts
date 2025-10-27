@@ -8,3 +8,4 @@ export * from "./create-comment.dto";
 export * from "./update-comment.dto";
 export * from "./create-task-audit.dto";
 export * from "./update-task-audit.dto";
+export * from "./create-notification.dto"

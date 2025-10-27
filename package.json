@@ -15,6 +15,9 @@
     "test": "turbo run test"
   },
   "devDependencies": {
+    "@nestjs/websockets": "11.1.7",
+    "@nestjs/platform-socket.io": "11.1.7",
+    "socket.io": "^4.7.1",
     "@nestjs/common": "11.1.7",
     "@nestjs/core": "11.1.7",
     "@nestjs/swagger": "^11.2.1",
@@ -31,7 +34,8 @@
     "typeorm": "^0.3.27",
     "pg": "^8.13.1",
     "dotenv": "^17.2.3",
-    "@nestjs/config": "^4.0.2"
+    "@nestjs/config": "^4.0.2",
+    "rxjs": "^7.8.1"
   },
   "engines": {
     "node": ">=18"

@@ -10,5 +10,6 @@ export const RABBITMQ_TASK_ASSIGNMENT_CREATED = "task-assignment.created";
 export const RABBITMQ_TASK_UPDATED = "task.updated";
 export const RABBITMQ_TASK_DELETED = "task.deleted";
 export const RABBITMQ_CREATE_TASK_AUDIT = "create-task-audit";
+export const RABBITMQ_CREATE_NOTIFICATION = "create-notification";
 export const RABBITMQ_GET_ALL_COMMENTS_BY_TASK =
   "get-all-tasks-comments-by-task";

@@ -5,6 +5,8 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { LoggerModule } from '@my-monorepo/shared-logger';
 import { envValidationSchema } from '@my-monorepo/shared-config';
+import { NotificationModule } from './notification/notification.module';
+import { Notification } from './notification/entities/notification.entity';
 
 @Module({
   imports: [
@@ -24,9 +26,10 @@ import { envValidationSchema } from '@my-monorepo/shared-config';
       username: process.env.DB_USER,
       password: process.env.DB_PASS,
       database: process.env.NOTIFICATION_DB_NAME,
-      entities: [],
+      entities: [Notification],
       synchronize: false,
     }),
+    NotificationModule,
   ],
   controllers: [AppController],
   providers: [AppService],
