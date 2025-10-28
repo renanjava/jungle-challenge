@@ -157,7 +157,7 @@ export class AppService {
   }
 
   async updateOneTask(id: string, updateTaskDto: UpdateTaskDto) {
-    return await firstValueFrom(
+    const updatedTask = await firstValueFrom(
       this.tasksClient
         .send({ cmd: RABBITMQ_TASK_UPDATED }, { id, updateTaskDto })
         .pipe(
@@ -172,6 +172,14 @@ export class AppService {
           ),
         ),
     );
+    if (updateTaskDto.status) {
+      this.notificationsClient.emit(RABBITMQ_CREATE_NOTIFICATION, {
+        user_id: id,
+        type: NotificationType.STATUS_CHANGE,
+        payload: { title: 'O status da tarefa foi alterado' },
+      });
+    }
+    return updatedTask;
   }
 
   async deleteOneTask(id: string) {
@@ -223,7 +231,7 @@ export class AppService {
 
   async createTaskComment(createCommentDto: CreateCommentDto, taskId: string) {
     await this.getUserById(createCommentDto.user_id);
-    return await firstValueFrom(
+    const comment = await firstValueFrom(
       this.tasksClient
         .send(
           { cmd: RABBITMQ_TASK_COMMENT_CREATED },
@@ -241,6 +249,12 @@ export class AppService {
           ),
         ),
     );
+    this.notificationsClient.emit(RABBITMQ_CREATE_NOTIFICATION, {
+      user_id: createCommentDto.user_id,
+      type: NotificationType.NEW_COMMENT,
+      payload: { title: 'Um novo comentário foi atribuído à sua tarefa.' },
+    });
+    return comment;
   }
 
   async findAllCommentsByTask(page: string, size: string, taskId: string) {
