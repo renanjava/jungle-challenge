@@ -10,6 +10,7 @@ import {
 } from "@/schemas/register.schema";
 import { Lock, Mail, User } from "lucide-react";
 import { useAuthRegister } from "@/hooks/useAuthRegister";
+import { Link } from "@tanstack/react-router";
 
 export function RegisterForm() {
   const {
@@ -90,16 +91,12 @@ export function RegisterForm() {
 
         <div className="text-center text-sm text-muted-foreground">
           Já possui uma conta?{" "}
-          <a
-            href="#"
+          <Link
             className="text-primary hover:underline font-medium"
-            onClick={(e) => {
-              e.preventDefault();
-              alert("Ir para pagina de login");
-            }}
+            to="/login"
           >
             Logar-se
-          </a>
+          </Link>
         </div>
       </form>
     </CardContent>

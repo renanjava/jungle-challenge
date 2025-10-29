@@ -7,6 +7,7 @@ import { Label } from "./ui/label";
 import { loginSchema, type LoginFormValues } from "@/schemas/login.schema";
 import { Lock, Mail } from "lucide-react";
 import { useAuthLogin } from "@/hooks/useAuthLogin";
+import { Link } from "@tanstack/react-router";
 
 export function LoginForm() {
   const {
@@ -80,16 +81,12 @@ export function LoginForm() {
 
         <div className="text-center text-sm text-muted-foreground">
           Nao tem uma conta?{" "}
-          <a
-            href="#"
+          <Link
             className="text-primary hover:underline font-medium"
-            onClick={(e) => {
-              e.preventDefault();
-              alert("Ir para pagina de cadastro");
-            }}
+            to="/register"
           >
             Cadastre-se
-          </a>
+          </Link>
         </div>
       </form>
     </CardContent>
