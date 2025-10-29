@@ -8,7 +8,7 @@ import {
   registerSchema,
   type RegisterFormValues,
 } from "@/schemas/register.schema";
-import { Lock, Mail } from "lucide-react";
+import { Lock, Mail, User } from "lucide-react";
 import { useAuthRegister } from "@/hooks/useAuthRegister";
 
 export function RegisterForm() {
@@ -32,7 +32,7 @@ export function RegisterForm() {
         <div className="space-y-2">
           <Label htmlFor="username">Usuário</Label>
           <div className="relative">
-            <Mail className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+            <User className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
             <Input
               id="username"
               type="username"
@@ -85,7 +85,7 @@ export function RegisterForm() {
         </div>
 
         <Button type="submit" className="w-full" disabled={isPending}>
-          {isPending ? "Entrando..." : "Entrar"}
+          {isPending ? "Cadastrando..." : "Cadastrar"}
         </Button>
 
         <div className="text-center text-sm text-muted-foreground">
