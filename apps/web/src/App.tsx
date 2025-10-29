@@ -1,15 +1,9 @@
-import {Button} from './components/ui/button'
+import { LoginForm } from "./components/LoginForm";
 
 export default function App() {
   return (
-    <div className="flex min-h-screen items-center justify-center bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-gray-100">
-      <h1 className="text-4xl font-bold">Hello Tailwind! 🌟</h1>
-       <div className="p-4 space-x-2">
-      <Button>Default</Button>
-      <Button variant="secondary">Secondary</Button>
-      <Button variant="outline">Outline</Button>
-      <Button variant="destructive">Destructive</Button>
-    </div>
+    <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800 p-4">
+      <LoginForm />
     </div>
   );
 }
