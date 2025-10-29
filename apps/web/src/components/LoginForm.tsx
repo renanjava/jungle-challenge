@@ -13,6 +13,7 @@ import { Label } from "./ui/label";
 import { loginSchema, type LoginFormValues } from "@/schemas/login.schema";
 import { Lock, Mail } from "lucide-react";
 import { useAuthLogin } from "@/hooks/useAuthLogin";
+import { Toaster } from "react-hot-toast";
 
 export function LoginForm() {
   const {
@@ -108,6 +109,34 @@ export function LoginForm() {
           </div>
         </form>
       </CardContent>
+      <Toaster
+        position="top-right"
+        reverseOrder={false}
+        toastOptions={{
+          duration: 4000,
+          style: {
+            borderRadius: "10px",
+            background: "#1f2937",
+            color: "#fff",
+            padding: "16px",
+            fontWeight: "500",
+          },
+          success: {
+            icon: "✅",
+            style: {
+              background: "#16a34a",
+              color: "#fff",
+            },
+          },
+          error: {
+            icon: "❌",
+            style: {
+              background: "#dc2626",
+              color: "#fff",
+            },
+          },
+        }}
+      />
     </Card>
   );
 }
