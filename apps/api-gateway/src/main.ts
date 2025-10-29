@@ -12,7 +12,7 @@ async function bootstrap() {
 
   app.use(helmet());
   app.enableCors({
-    origin: ['http://localhost:3000'],
+    origin: ['http://localhost:5173'],
   });
 
   const config = new DocumentBuilder()

@@ -12,20 +12,21 @@ import { Input } from "./ui/input";
 import { Label } from "./ui/label";
 import { loginSchema, type LoginFormValues } from "@/schemas/login.schema";
 import { Lock, Mail } from "lucide-react";
+import { useAuthLogin } from "@/hooks/useAuthLogin";
 
 export function LoginForm() {
   const {
-    login,
+    register,
     handleSubmit,
-    formState: { errors, isSubmitting },
+    formState: { errors },
   } = useForm<LoginFormValues>({
     resolver: zodResolver(loginSchema),
   });
 
+  const { mutate, isPending } = useAuthLogin();
+
   const onSubmit = async (data: LoginFormValues) => {
-    await new Promise((resolve) => setTimeout(resolve, 1000));
-    console.log("Dados do formulario:", data);
-    alert(`Login com: ${data.email}`);
+    mutate(data);
   };
 
   return (
@@ -88,8 +89,8 @@ export function LoginForm() {
             )}
           </div>
 
-          <Button type="submit" className="w-full" disabled={isSubmitting}>
-            {isSubmitting ? "Entrando..." : "Entrar"}
+          <Button type="submit" className="w-full" disabled={isPending}>
+            {isPending ? "Entrando..." : "Entrar"}
           </Button>
 
           <div className="text-center text-sm text-muted-foreground">
