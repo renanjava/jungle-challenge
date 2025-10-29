@@ -4,6 +4,7 @@
 import { LoginDto } from '@my-monorepo/shared-dtos';
 import {
   BadRequestException,
+  ConflictException,
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
@@ -24,7 +25,13 @@ export class UsersService {
   async register(dto: RegisterDto): Promise<User> {
     try {
       const user = this.usersRepository.create(dto);
-      return this.usersRepository.save(user);
+      try {
+        return await this.usersRepository.save(user);
+      } catch (err: any) {
+        if (err.code === '23505') {
+          throw new ConflictException('Email ou nome de usuário já cadastrado');
+        }
+      }
     } catch (error) {
       throw new RpcException({
         statusCode: error.status || 500,
