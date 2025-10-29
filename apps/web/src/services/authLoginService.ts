@@ -1,7 +1,6 @@
 import type { LoginFormValues } from "@/schemas/login.schema";
 import axios from "axios";
-
-const API_GATEWAY_URL = "http://localhost:3001";
+import { API_GATEWAY_URL } from "./constants";
 
 export async function authLogin(data: LoginFormValues) {
   const response = await axios.post(API_GATEWAY_URL + "/api/auth/login", data);
