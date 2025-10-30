@@ -29,16 +29,16 @@ export function TaskCard({ task /*onShowDetails*/ }: TaskCardProps) {
   return (
     <Card className="hover:shadow-md transition-shadow">
       <CardHeader className="pb-3">
-        <div className="flex items-start justify-between gap-4">
-          <CardTitle className="text-lg">{task.title}</CardTitle>
-          <div className="flex gap-2 flex-shrink-0">
+        <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3">
+          <CardTitle className="text-lg flex-1 min-w-0">{task.title}</CardTitle>
+          <div className="flex gap-2 flex-wrap">
             <span
-              className={`px-2 py-1 rounded-full text-xs font-medium ${priority.color}`}
+              className={`px-2 py-1 rounded-full text-xs font-medium whitespace-nowrap ${priority.color}`}
             >
               {priority.label}
             </span>
             <span
-              className={`px-2 py-1 rounded-full text-xs font-medium ${status.color}`}
+              className={`px-2 py-1 rounded-full text-xs font-medium whitespace-nowrap ${status.color}`}
             >
               {status.label}
             </span>
@@ -50,7 +50,7 @@ export function TaskCard({ task /*onShowDetails*/ }: TaskCardProps) {
           {task.description}
         </p>
 
-        <div className="flex items-center justify-between">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
           <div className="flex items-center gap-2 text-sm text-muted-foreground">
             <Calendar className="h-4 w-4" />
             <span>
@@ -58,12 +58,17 @@ export function TaskCard({ task /*onShowDetails*/ }: TaskCardProps) {
             </span>
           </div>
 
-          <Button
-          //onClick={() => onShowDetails(task.id)}
-          //className="bg-green-600 hover:bg-green-700"
-          >
-            Exibir Detalhes
-          </Button>
+          <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
+            <Button
+              variant="outline"
+              className="bg-blue-600 hover:bg-blue-700 text-white border-blue-600 w-full sm:w-auto"
+            >
+              Exibir Comentários
+            </Button>
+            <Button className="bg-green-600 hover:bg-green-700 w-full sm:w-auto">
+              Ingressar na tarefa
+            </Button>
+          </div>
         </div>
       </CardContent>
     </Card>
