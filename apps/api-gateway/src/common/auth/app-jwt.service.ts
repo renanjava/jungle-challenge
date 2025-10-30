@@ -27,7 +27,7 @@ export class AppJwtService {
   async generateAccessToken(payload: Record<string, any>) {
     return await this.jwtService.signAsync(payload, {
       secret: this.configService.get('JWT_ACCESS_SECRET'),
-      expiresIn: '15s',
+      expiresIn: '15m',
     });
   }
 
