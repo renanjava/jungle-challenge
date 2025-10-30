@@ -19,15 +19,15 @@ export class AppJwtService {
     };
   }
 
-  refreshAccessToken(req: any) {
+  async refreshAccessToken(req: any) {
     const payload = { sub: req.user.userId, email: req.user.email };
-    return { access_token: this.generateAccessToken(payload) };
+    return { access_token: await this.generateAccessToken(payload) };
   }
 
   async generateAccessToken(payload: Record<string, any>) {
     return await this.jwtService.signAsync(payload, {
       secret: this.configService.get('JWT_ACCESS_SECRET'),
-      expiresIn: '15m',
+      expiresIn: '15s',
     });
   }
 

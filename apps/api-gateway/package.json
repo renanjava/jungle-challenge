@@ -28,6 +28,7 @@
     "amqp-connection-manager": "^5.0.0",
     "amqplib": "^0.10.9",
     "axios": "^1.12.2",
+    "cookie-parser": "^1.4.7",
     "helmet": "^8.1.0",
     "passport-jwt": "^4.0.1",
     "pino": "^10.1.0",
