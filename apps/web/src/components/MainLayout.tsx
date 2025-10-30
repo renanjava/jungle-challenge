@@ -1,15 +1,6 @@
 import { useState } from "react";
 import { Link } from "@tanstack/react-router";
-import {
-  Home,
-  ListTodo,
-  Users,
-  LogOut,
-  Menu,
-  X,
-  Bell,
-  User,
-} from "lucide-react";
+import { Home, ListTodo, Users, LogOut, Menu, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 

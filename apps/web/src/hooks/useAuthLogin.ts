@@ -13,8 +13,10 @@ export const useAuthLogin = () => {
     mutationFn: authLogin,
     onSuccess: (response) => {
       toast.success("Login realizado com sucesso!");
-      setTokens(response.access_token, response.refresh_token);
-      navigate({ to: "/dashboard" });
+      setTimeout(() => {
+        setTokens(response.access_token, response.refresh_token);
+        navigate({ to: "/dashboard" });
+      }, 1000);
     },
     onError: (error: any) => {
       toast.error(error.response?.data?.message || "Falha no login");
