@@ -6,6 +6,7 @@ import { Plus } from "lucide-react";
 import { TaskCard } from "@/components/TaskCard";
 import { useTasksGetAll } from "@/hooks/useTasksGetAll";
 import type { ITask } from "@/interfaces/tasks.interface";
+import { Skeleton } from "@/components/ui/skeleton";
 
 export const Route = createFileRoute("/tasks")({
   component: TasksPage,
@@ -36,14 +37,20 @@ export function TasksPage() {
           </CardHeader>
           <CardContent>
             <div className="space-y-4 p-6">
-              {!isLoading &&
-                !error &&
+              {!error && isLoading ? (
+                <div className="space-y-4">
+                  {[...Array(3)].map((_, i) => (
+                    <div key={i} className="p-4 border rounded-xl space-y-2">
+                      <Skeleton className="h-4 w-1/3" /> {}
+                      <Skeleton className="h-3 w-2/3" /> {}
+                    </div>
+                  ))}
+                </div>
+              ) : (
                 data?.map((task: ITask) => (
-                  <TaskCard
-                    key={task.id}
-                    task={task} /*onShowDetails={task}*/
-                  />
-                ))}
+                  <TaskCard key={task.id} task={task} />
+                ))
+              )}
               {error && (
                 <p className="text-red-500">
                   Ocorreu um erro ao carregar as tarefas.
