@@ -3,12 +3,17 @@ import { MainLayout } from "@/components/MainLayout";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
+import { TaskCard } from "@/components/TaskCard";
+import { useTasksGetAll } from "@/hooks/useTasksGetAll";
+import type { ITask } from "@/interfaces/tasks.interface";
 
 export const Route = createFileRoute("/tasks")({
   component: TasksPage,
 });
 
 export function TasksPage() {
+  const { data, isLoading, error } = useTasksGetAll();
+
   return (
     <MainLayout>
       <div className="space-y-6">
@@ -30,9 +35,21 @@ export function TasksPage() {
             <CardTitle>Lista de Tarefas</CardTitle>
           </CardHeader>
           <CardContent>
-            <p className="text-muted-foreground">
-              Suas tarefas aparecerão aqui...
-            </p>
+            <div className="space-y-4 p-6">
+              {!isLoading &&
+                !error &&
+                data?.map((task: ITask) => (
+                  <TaskCard
+                    key={task.id}
+                    task={task} /*onShowDetails={task}*/
+                  />
+                ))}
+              {error && (
+                <p className="text-red-500">
+                  Ocorreu um erro ao carregar as tarefas.
+                </p>
+              )}
+            </div>
           </CardContent>
         </Card>
       </div>

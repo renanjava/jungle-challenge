@@ -533,6 +533,9 @@ importers:
       '@eslint/js':
         specifier: ^9.36.0
         version: 9.36.0
+      '@my-monorepo/shared-dtos':
+        specifier: '*'
+        version: link:../../packages/shared-dtos
       '@tanstack/router-cli':
         specifier: ^1.133.36
         version: 1.133.36
