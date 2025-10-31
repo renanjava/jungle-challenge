@@ -38,7 +38,6 @@ export function TasksPage() {
     if (!data?.data) return [];
 
     let filtered = [...data.data];
-    console.log({ filtered });
 
     if (searchTerm) {
       filtered = filtered.filter((task: ITask) =>
