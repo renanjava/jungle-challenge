@@ -21,6 +21,6 @@ export const useTasksGetAll = (page: number = 1, size: number = 6) => {
       }
     },
     retry: false,
-    queryKey: ["tasks"],
+    queryKey: ["tasks", page, size],
   });
 };
