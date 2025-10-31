@@ -8,3 +8,11 @@ export interface ITask {
   priority: TaskPriority;
   status: TaskStatus;
 }
+
+export interface IPaginatedTasks {
+  data: ITask[];
+  total: number;
+  page: number;
+  size: number;
+  totalPages: number;
+}

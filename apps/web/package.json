@@ -15,6 +15,7 @@
   "dependencies": {
     "@hookform/resolvers": "^3.0.0",
     "@radix-ui/react-label": "^2.1.7",
+    "@radix-ui/react-select": "^2.2.6",
     "@radix-ui/react-slot": "^1.2.3",
     "@shadcn/ui": "^0.0.4",
     "@tanstack/react-query": "^5.59.0",
@@ -37,8 +38,8 @@
     "zod": "^3.23.8"
   },
   "devDependencies": {
-    "@my-monorepo/shared-dtos": "*",
     "@eslint/js": "^9.36.0",
+    "@my-monorepo/shared-dtos": "*",
     "@tanstack/router-cli": "^1.133.36",
     "@tanstack/router-devtools": "^1.87.0",
     "@tanstack/router-plugin": "^1.133.36",
