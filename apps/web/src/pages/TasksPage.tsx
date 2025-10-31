@@ -16,6 +16,7 @@ import { useTasksGetAll } from "@/hooks/useTasksGetAll";
 import type { ITask } from "@/interfaces/tasks.interface";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useState, useMemo, useEffect } from "react";
+import { CreateTaskModal } from "@/components/CreateTaskModal";
 
 export const Route = createFileRoute("/tasks")({
   component: TasksPage,
@@ -75,6 +76,26 @@ export function TasksPage() {
   const totalPages = data?.totalPages || 0;
   const total = data?.total || 0;
 
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isCreating, setIsCreating] = useState(false);
+
+  const handleCreateTask = async (newTaskData: {
+    title: string;
+    description: string;
+    status: string;
+    priority: string;
+  }) => {
+    try {
+      setIsCreating(true);
+      //await api.post("/tasks", newTaskData);
+      setIsModalOpen(false);
+    } catch (err) {
+      console.error("Erro ao criar tarefa:", err);
+    } finally {
+      setIsCreating(false);
+    }
+  };
+
   return (
     <MainLayout>
       <div className="space-y-6">
@@ -85,11 +106,18 @@ export function TasksPage() {
               Gerencie suas tarefas e projetos
             </p>
           </div>
-          <Button>
+          <Button onClick={() => setIsModalOpen(true)}>
             <Plus className="mr-2 h-4 w-4" />
             Nova Tarefa
           </Button>
         </div>
+
+        <CreateTaskModal
+          open={isModalOpen}
+          onOpenChange={setIsModalOpen}
+          onSubmit={handleCreateTask}
+          isLoading={isCreating}
+        />
 
         <Card>
           <CardHeader>
