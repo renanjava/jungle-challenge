@@ -17,6 +17,9 @@ import type { ITask } from "@/interfaces/tasks.interface";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useState, useMemo, useEffect } from "react";
 import { CreateTaskModal } from "@/components/CreateTaskModal";
+import { CustomToaster } from "@/components/CustomToaster";
+import { useCreateTask } from "@/hooks/useCreateTask";
+import type { CreateTaskFormValues } from "@/schemas/create-task.schema";
 
 export const Route = createFileRoute("/tasks")({
   component: TasksPage,
@@ -34,6 +37,8 @@ export function TasksPage() {
     currentPage,
     ITEMS_PER_PAGE
   );
+
+  const { mutate } = useCreateTask();
 
   const filteredTasks = useMemo(() => {
     if (!data?.data) return [];
@@ -79,15 +84,10 @@ export function TasksPage() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isCreating, setIsCreating] = useState(false);
 
-  const handleCreateTask = async (newTaskData: {
-    title: string;
-    description: string;
-    status: string;
-    priority: string;
-  }) => {
+  const handleCreateTask = async (newTaskData: CreateTaskFormValues) => {
     try {
       setIsCreating(true);
-      //await api.post("/tasks", newTaskData);
+      mutate(newTaskData);
       setIsModalOpen(false);
     } catch (err) {
       console.error("Erro ao criar tarefa:", err);
@@ -261,6 +261,7 @@ export function TasksPage() {
           </CardContent>
         </Card>
       </div>
+      <CustomToaster />
     </MainLayout>
   );
 }
