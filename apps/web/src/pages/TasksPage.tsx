@@ -17,8 +17,12 @@ import type { ITask } from "@/interfaces/tasks.interface";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useState, useMemo, useEffect } from "react";
 import { CreateTaskModal } from "@/components/CreateTaskModal";
+import { EditTaskModal } from "@/components/EditTaskModal";
+import { DeleteTaskDialog } from "@/components/DeleteTaskDialog";
 import { CustomToaster } from "@/components/CustomToaster";
 import { useCreateTask } from "@/hooks/useCreateTask";
+import { useCreateTaskAssignment } from "@/hooks/useCreateTaskAssignment";
+import { useAuth } from "@/context/AuthContext";
 import type { CreateTaskFormValues } from "@/schemas/create-task.schema";
 
 export const Route = createFileRoute("/tasks")({
@@ -38,7 +42,9 @@ export function TasksPage() {
     ITEMS_PER_PAGE
   );
 
-  const { mutate } = useCreateTask();
+  const { mutate: createTask } = useCreateTask();
+  const { mutate: joinTask } = useCreateTaskAssignment();
+  const { user } = useAuth();
 
   const filteredTasks = useMemo(() => {
     if (!data?.data) return [];
@@ -84,15 +90,75 @@ export function TasksPage() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isCreating, setIsCreating] = useState(false);
 
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [isEditing, setIsEditing] = useState(false);
+  const [taskToEdit, setTaskToEdit] = useState<ITask | null>(null);
+
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [taskToDelete, setTaskToDelete] = useState<ITask | null>(null);
+
   const handleCreateTask = async (newTaskData: CreateTaskFormValues) => {
     try {
       setIsCreating(true);
-      mutate(newTaskData);
+      createTask(newTaskData);
       setIsModalOpen(false);
     } catch (err) {
       console.error("Erro ao criar tarefa:", err);
     } finally {
       setIsCreating(false);
+    }
+  };
+
+  const handleJoinTask = (taskId: string) => {
+    if (!user?.id) {
+      console.error("Usuário não autenticado");
+      return;
+    }
+
+    joinTask({
+      user_id: user.id,
+      task_id: taskId,
+    });
+  };
+
+  const handleEditTask = (task: ITask) => {
+    setTaskToEdit(task);
+    setIsEditModalOpen(true);
+  };
+
+  const handleUpdateTask = async (updatedData: CreateTaskFormValues) => {
+    if (!taskToEdit) return;
+
+    try {
+      setIsEditing(true);
+      console.log("Atualizar tarefa:", taskToEdit.id, updatedData);
+      setIsEditModalOpen(false);
+      setTaskToEdit(null);
+    } catch (err) {
+      console.error("Erro ao atualizar tarefa:", err);
+    } finally {
+      setIsEditing(false);
+    }
+  };
+
+  const handleDeleteTask = (task: ITask) => {
+    setTaskToDelete(task);
+    setIsDeleteDialogOpen(true);
+  };
+
+  const handleConfirmDelete = async () => {
+    if (!taskToDelete) return;
+
+    try {
+      setIsDeleting(true);
+      console.log("Excluir tarefa:", taskToDelete.id);
+      setIsDeleteDialogOpen(false);
+      setTaskToDelete(null);
+    } catch (err) {
+      console.error("Erro ao excluir tarefa:", err);
+    } finally {
+      setIsDeleting(false);
     }
   };
 
@@ -117,6 +183,22 @@ export function TasksPage() {
           onOpenChange={setIsModalOpen}
           onSubmit={handleCreateTask}
           isLoading={isCreating}
+        />
+
+        <EditTaskModal
+          open={isEditModalOpen}
+          onOpenChange={setIsEditModalOpen}
+          onSubmit={handleUpdateTask}
+          task={taskToEdit}
+          isLoading={isEditing}
+        />
+
+        <DeleteTaskDialog
+          open={isDeleteDialogOpen}
+          onOpenChange={setIsDeleteDialogOpen}
+          onConfirm={handleConfirmDelete}
+          task={taskToDelete}
+          isLoading={isDeleting}
         />
 
         <Card>
@@ -211,7 +293,13 @@ export function TasksPage() {
               ) : filteredTasks.length > 0 ? (
                 <>
                   {filteredTasks.map((task: ITask) => (
-                    <TaskCard key={task.id} task={task} />
+                    <TaskCard
+                      key={task.id}
+                      task={task}
+                      onJoinTask={handleJoinTask}
+                      onEditTask={handleEditTask}
+                      onDeleteTask={handleDeleteTask}
+                    />
                   ))}
 
                   {totalPages > 1 && (

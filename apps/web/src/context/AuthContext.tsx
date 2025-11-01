@@ -1,8 +1,15 @@
 import React, { createContext, useState, useContext, useEffect } from "react";
 
+interface User {
+  id: string;
+  email: string;
+  name?: string;
+}
+
 interface AuthContextType {
   accessToken: string | null;
   refreshToken: string | null;
+  user: User | null;
   setTokens: (access: string, refresh: string) => void;
   setAccess: (access: string) => void;
   clearTokens: () => void;
@@ -33,11 +40,36 @@ const deleteCookie = (name: string) => {
   document.cookie = `${name}=;expires=Thu, 01 Jan 1970 00:00:00 UTC;path=/;`;
 };
 
+const decodeToken = (token: string): User | null => {
+  try {
+    const base64Url = token.split(".")[1];
+    const base64 = base64Url.replace(/-/g, "+").replace(/_/g, "/");
+    const jsonPayload = decodeURIComponent(
+      atob(base64)
+        .split("")
+        .map((c) => "%" + ("00" + c.charCodeAt(0).toString(16)).slice(-2))
+        .join("")
+    );
+
+    const payload = JSON.parse(jsonPayload);
+
+    return {
+      id: payload.sub || payload.id || payload.user_id,
+      email: payload.email,
+      name: payload.name,
+    };
+  } catch (error) {
+    console.error("Erro ao decodificar token:", error);
+    return null;
+  }
+};
+
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
   const [accessToken, setAccessToken] = useState<string | null>(null);
   const [refreshToken, setRefreshToken] = useState<string | null>(null);
+  const [user, setUser] = useState<User | null>(null);
 
   useEffect(() => {
     const storedAccess = localStorage.getItem("accessToken");
@@ -46,6 +78,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     if (storedAccess && storedRefresh) {
       setAccessToken(storedAccess);
       setRefreshToken(storedRefresh);
+
+      const userData = decodeToken(storedAccess);
+      setUser(userData);
     }
   }, []);
 
@@ -54,16 +89,23 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     setRefreshToken(refresh);
     localStorage.setItem("accessToken", access);
     setCookie("refreshToken", refresh, 7);
+
+    const userData = decodeToken(access);
+    setUser(userData);
   };
 
   const setAccess = (access: string) => {
     setAccessToken(access);
     localStorage.setItem("accessToken", access);
+
+    const userData = decodeToken(access);
+    setUser(userData);
   };
 
   const clearTokens = () => {
     setAccessToken(null);
     setRefreshToken(null);
+    setUser(null);
     localStorage.removeItem("accessToken");
     deleteCookie("refreshToken");
   };
@@ -71,6 +113,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   const value: AuthContextType = {
     accessToken,
     refreshToken,
+    user,
     setTokens,
     setAccess,
     clearTokens,
