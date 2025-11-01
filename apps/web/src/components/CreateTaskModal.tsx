@@ -61,7 +61,6 @@ export function CreateTaskModal({
   };
 
   const handleFormSubmit = (data: CreateTaskFormValues) => {
-    console.log("Dados validados:", data);
     onSubmit(data);
     reset();
   };
