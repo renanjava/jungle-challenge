@@ -1,3 +1,7 @@
+import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+
 import {
   Dialog,
   DialogContent,
@@ -17,19 +21,16 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Label } from "@/components/ui/label";
-import { useState } from "react";
-//import { TaskPriority, TaskStatus } from "@my-monorepo/shared-dtos";
+import {
+  createTaskSchema,
+  type CreateTaskFormValues,
+} from "@/schemas/create-task.schema";
+import type { TaskPriority, TaskStatus } from "@my-monorepo/shared-dtos";
 
 interface CreateTaskModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  onSubmit: (taskData: {
-    title: string;
-    description: string;
-    deadline: string;
-    priority: string;
-    status: string;
-  }) => void;
+  onSubmit: (data: CreateTaskFormValues) => void;
   isLoading?: boolean;
 }
 
@@ -39,37 +40,32 @@ export function CreateTaskModal({
   onSubmit,
   isLoading = false,
 }: CreateTaskModalProps) {
-  const [title, setTitle] = useState("");
-  const [description, setDescription] = useState("");
-  const [deadline, setDeadline] = useState("");
-  const [priority, setPriority] = useState<string>("MEDIUM");
-  const [status, setStatus] = useState<string>("TODO");
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-
-    onSubmit({
-      title,
-      description,
-      deadline,
-      priority,
-      status,
-    });
-
-    handleReset();
-  };
-
-  const handleReset = () => {
-    setTitle("");
-    setDescription("");
-    setDeadline("");
-    setPriority("MEDIUM");
-    setStatus("TODO");
-  };
+  const {
+    register,
+    handleSubmit,
+    reset,
+    setValue,
+    formState: { errors },
+  } = useForm<CreateTaskFormValues>({
+    resolver: zodResolver(createTaskSchema),
+    defaultValues: {
+      title: "",
+      description: "",
+      deadline: "",
+      priority: "MEDIUM",
+      status: "TODO",
+    },
+  });
 
   const handleCancel = () => {
-    handleReset();
+    reset();
     onOpenChange(false);
+  };
+
+  const handleFormSubmit = (data: CreateTaskFormValues) => {
+    console.log("Dados validados:", data);
+    onSubmit(data);
+    reset();
   };
 
   return (
@@ -82,93 +78,104 @@ export function CreateTaskModal({
           </DialogDescription>
         </DialogHeader>
 
-        <form onSubmit={handleSubmit}>
+        <form onSubmit={handleSubmit(handleFormSubmit)}>
           <div className="grid gap-4 py-4">
             <div className="grid gap-2">
-              <Label htmlFor="title">
-                Título <span className="text-red-500">*</span>
-              </Label>
+              <Label htmlFor="title">Título *</Label>
               <Input
                 id="title"
                 placeholder="Digite o título da tarefa"
-                value={title}
-                onChange={(e) => setTitle(e.target.value)}
-                required
                 disabled={isLoading}
+                {...register("title")}
               />
+              {errors.title && (
+                <span className="text-sm text-red-500">
+                  {errors.title.message}
+                </span>
+              )}
             </div>
 
             <div className="grid gap-2">
-              <Label htmlFor="description">
-                Descrição <span className="text-red-500">*</span>
-              </Label>
+              <Label htmlFor="description">Descrição *</Label>
               <Textarea
                 id="description"
                 placeholder="Descreva a tarefa..."
-                value={description}
-                onChange={(e) => setDescription(e.target.value)}
-                required
-                disabled={isLoading}
                 rows={4}
+                disabled={isLoading}
+                {...register("description")}
               />
+              {errors.description && (
+                <span className="text-sm text-red-500">
+                  {errors.description.message}
+                </span>
+              )}
             </div>
 
             <div className="grid gap-2">
-              <Label htmlFor="deadline">
-                Prazo <span className="text-red-500">*</span>
-              </Label>
+              <Label htmlFor="deadline">Prazo *</Label>
               <Input
                 id="deadline"
                 type="date"
-                value={deadline}
-                onChange={(e) => setDeadline(e.target.value)}
-                required
                 disabled={isLoading}
                 min={new Date().toISOString().split("T")[0]}
+                {...register("deadline")}
               />
+              {errors.deadline && (
+                <span className="text-sm text-red-500">
+                  {errors.deadline.message}
+                </span>
+              )}
             </div>
 
             <div className="grid grid-cols-2 gap-4">
               <div className="grid gap-2">
-                <Label htmlFor="priority">
-                  Prioridade <span className="text-red-500">*</span>
-                </Label>
+                <Label htmlFor="priority">Prioridade *</Label>
                 <Select
-                  value={priority}
-                  onValueChange={(value) => setPriority(value as string)}
+                  onValueChange={(val) =>
+                    setValue("priority", val as TaskPriority)
+                  }
+                  defaultValue="MEDIUM"
                   disabled={isLoading}
                 >
                   <SelectTrigger id="priority">
-                    <SelectValue />
+                    <SelectValue placeholder="Selecione..." />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value={"LOW"}>Baixa</SelectItem>
-                    <SelectItem value={"MEDIUM"}>Média</SelectItem>
-                    <SelectItem value={"HIGH"}>Alta</SelectItem>
-                    <SelectItem value={"URGENT"}>Urgente</SelectItem>
+                    <SelectItem value="LOW">Baixa</SelectItem>
+                    <SelectItem value="MEDIUM">Média</SelectItem>
+                    <SelectItem value="HIGH">Alta</SelectItem>
+                    <SelectItem value="URGENT">Urgente</SelectItem>
                   </SelectContent>
                 </Select>
+                {errors.priority && (
+                  <span className="text-sm text-red-500">
+                    {errors.priority.message}
+                  </span>
+                )}
               </div>
 
               <div className="grid gap-2">
-                <Label htmlFor="status">
-                  Status <span className="text-red-500">*</span>
-                </Label>
+                <Label htmlFor="status">Status *</Label>
                 <Select
-                  value={status}
-                  onValueChange={(value) => setStatus(value as string)}
+                  onValueChange={(val) => setValue("status", val as TaskStatus)}
+                  defaultValue="TODO"
                   disabled={isLoading}
                 >
                   <SelectTrigger id="status">
-                    <SelectValue />
+                    <SelectValue placeholder="Selecione..." />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value={"TODO"}>A Fazer</SelectItem>
-                    <SelectItem value={"IN_PROGRESS"}>Em Progresso</SelectItem>
-                    <SelectItem value={"REVIEW"}>Em Revisão</SelectItem>
-                    <SelectItem value={"DONE"}>Concluída</SelectItem>
+                    <SelectItem value="TODO">A Fazer</SelectItem>
+                    <SelectItem value="IN_PROGRESS">Em Progresso</SelectItem>
+                    <SelectItem value="REVIEW">Em Revisão</SelectItem>
+                    <SelectItem value="DONE">Concluída</SelectItem>
                   </SelectContent>
                 </Select>
+                {errors.status && (
+                  <span className="text-sm text-red-500">
+                    {errors.status.message}
+                  </span>
+                )}
               </div>
             </div>
           </div>
