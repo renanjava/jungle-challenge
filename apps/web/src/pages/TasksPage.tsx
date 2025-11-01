@@ -24,6 +24,7 @@ import { useCreateTask } from "@/hooks/useCreateTask";
 import { useCreateTaskAssignment } from "@/hooks/useCreateTaskAssignment";
 import { useAuth } from "@/context/AuthContext";
 import type { CreateTaskFormValues } from "@/schemas/create-task.schema";
+import { useDeleteTask } from "@/hooks/useDeleteTask";
 
 export const Route = createFileRoute("/tasks")({
   component: TasksPage,
@@ -44,6 +45,7 @@ export function TasksPage() {
 
   const { mutate: createTask } = useCreateTask();
   const { mutate: joinTask } = useCreateTaskAssignment();
+  const { mutate: deleteTask } = useDeleteTask();
   const { user } = useAuth();
 
   const filteredTasks = useMemo(() => {
@@ -152,7 +154,7 @@ export function TasksPage() {
 
     try {
       setIsDeleting(true);
-      console.log("Excluir tarefa:", taskToDelete.id);
+      deleteTask({ id: taskToDelete.id });
       setIsDeleteDialogOpen(false);
       setTaskToDelete(null);
     } catch (err) {
