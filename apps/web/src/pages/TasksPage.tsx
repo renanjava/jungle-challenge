@@ -22,6 +22,7 @@ import { DeleteTaskDialog } from "@/components/DeleteTaskDialog";
 import { CustomToaster } from "@/components/CustomToaster";
 import { useCreateTask } from "@/hooks/useCreateTask";
 import { useCreateTaskAssignment } from "@/hooks/useCreateTaskAssignment";
+import { websocketService } from "@/services/websocketService";
 import { useAuth } from "@/context/AuthContext";
 import type { CreateTaskFormValues } from "@/schemas/create-task.schema";
 import { useDeleteTask } from "@/hooks/useDeleteTask";
@@ -125,6 +126,7 @@ export function TasksPage() {
       user_id: user.id,
       task_id: taskId,
     });
+    websocketService.joinTask(taskId);
   };
 
   const handleEditTask = (task: ITask) => {

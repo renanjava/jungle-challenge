@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   Dialog,
   DialogContent,
@@ -12,6 +12,7 @@ import { Plus, Loader2, MessageSquare } from "lucide-react";
 import { useCommentsGetAll } from "@/hooks/useCommentsGetAll";
 import { useAuth } from "@/context/AuthContext";
 import { useCreateComments } from "@/hooks/useCreateComments";
+import { websocketService } from "@/services/websocketService";
 
 interface CommentsModalProps {
   isOpen: boolean;
@@ -50,6 +51,14 @@ export function CommentsModal({
   };
 
   const comments = data?.data || [];
+  useEffect(() => {
+    if (isOpen) {
+      websocketService.joinTask(taskId);
+    }
+    return () => {
+      websocketService.leaveTask(taskId);
+    };
+  }, [isOpen, taskId]);
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unsafe-call */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import { Injectable } from '@nestjs/common';
@@ -51,7 +52,28 @@ export class TasksService {
 
   async findById(id: string) {
     try {
-      return await this.tasksRepository.findOneByOrFail({ id });
+      const task = await this.tasksRepository.findOne({
+        where: { id },
+        relations: ['taskAssignments', 'comments'],
+      });
+
+      if (!task) {
+        throw new Error('Task not found');
+      }
+      const assignments =
+        ((task as any).taskAssignments
+          ? (task as any).taskAssignments.map((a: any) => ({
+              id: a.id,
+              user_id: a.user_id,
+              task_id: a.task_id,
+              createdAt: a.createdAt,
+            }))
+          : []) || [];
+
+      return {
+        ...task,
+        assignments,
+      };
     } catch (error) {
       throw new RpcException({
         statusCode: error.status || 500,

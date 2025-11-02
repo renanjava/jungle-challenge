@@ -13,7 +13,6 @@ import { Reflector } from '@nestjs/core';
 import { Observable } from 'rxjs';
 import { tap } from 'rxjs/operators';
 import { AppService } from '../../app.service';
-//import { LoggerService } from '@my-monorepo/shared-logger';
 
 const TASK_AUDIT_KEY = 'taskAudit';
 
@@ -22,7 +21,6 @@ export class TaskAuditInterceptor {
   constructor(
     private readonly reflector: Reflector,
     private readonly appService: AppService,
-    //private readonly logger: LoggerService,
   ) {}
 
   async intercept(
@@ -56,9 +54,6 @@ export class TaskAuditInterceptor {
     return next.handle().pipe(
       tap(async (response) => {
         if (response.statusCode >= 400 && response.statusCode <= 502) {
-          /*this.logger.error(
-          'Erro ao tentar salvar o log da tarefa',
-          request.path),*/
           return;
         }
 

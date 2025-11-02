@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unsafe-call */
 /* eslint-disable @typescript-eslint/no-unsafe-return */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
@@ -172,12 +173,20 @@ export class AppService {
           ),
         ),
     );
-    if (updateTaskDto.status) {
-      this.notificationsClient.emit(RABBITMQ_CREATE_NOTIFICATION, {
-        user_id: id,
-        type: NotificationType.STATUS_CHANGE,
-        payload: { title: 'O status da tarefa foi alterado' },
-      });
+    if (updateTaskDto.status && updatedTask) {
+      if (updatedTask.assignments && Array.isArray(updatedTask.assignments)) {
+        updatedTask.assignments.forEach((assignment: any) => {
+          this.notificationsClient.emit(RABBITMQ_CREATE_NOTIFICATION, {
+            user_id: assignment.user_id,
+            type: NotificationType.STATUS_CHANGE,
+            payload: {
+              title: `Status da tarefa "${updatedTask.title}" foi alterado para ${updateTaskDto.status}`,
+              taskId: id,
+              newStatus: updateTaskDto.status,
+            },
+          });
+        });
+      }
     }
     return updatedTask;
   }
@@ -201,7 +210,8 @@ export class AppService {
   }
 
   async createTaskAssignment(createTaskAssignmentDto: CreateTaskAssignmentDto) {
-    await this.getUserById(createTaskAssignmentDto.user_id);
+    const newUser = await this.getUserById(createTaskAssignmentDto.user_id);
+    const task = await this.findOneTask(createTaskAssignmentDto.task_id);
     const taskAssignment = await firstValueFrom(
       this.tasksClient
         .send(
@@ -221,11 +231,25 @@ export class AppService {
           ),
         ),
     );
-    this.notificationsClient.emit(RABBITMQ_CREATE_NOTIFICATION, {
-      user_id: taskAssignment.user_id,
-      type: NotificationType.TASK_ASSIGNED,
-      payload: { title: 'Um novo usuário foi atribuído à sua tarefa.' },
-    });
+
+    if (task.assignments && Array.isArray(task.assignments)) {
+      for (const assignment of task.assignments) {
+        if (assignment.user_id !== createTaskAssignmentDto.user_id) {
+          this.notificationsClient.emit(RABBITMQ_CREATE_NOTIFICATION, {
+            user_id: assignment.user_id,
+            type: NotificationType.TASK_ASSIGNED,
+            payload: {
+              title: `${newUser.name || newUser.email} entrou na tarefa "${task.title}"`,
+              taskId: task.id,
+              newUserId: createTaskAssignmentDto.user_id,
+              newUserName: newUser.name || newUser.email,
+            },
+          });
+          await new Promise((resolve) => setTimeout(resolve, 150));
+        }
+      }
+    }
+
     return taskAssignment;
   }
 
@@ -249,11 +273,25 @@ export class AppService {
           ),
         ),
     );
-    this.notificationsClient.emit(RABBITMQ_CREATE_NOTIFICATION, {
-      user_id: createCommentDto.user_id,
-      type: NotificationType.NEW_COMMENT,
-      payload: { title: 'Um novo comentário foi atribuído à sua tarefa.' },
-    });
+
+    const task = await this.findOneTask(taskId);
+    if (task.assignments && Array.isArray(task.assignments)) {
+      for (const assignment of task.assignments) {
+        if (assignment.user_id !== createCommentDto.user_id) {
+          this.notificationsClient.emit(RABBITMQ_CREATE_NOTIFICATION, {
+            user_id: assignment.user_id,
+            type: NotificationType.NEW_COMMENT,
+            payload: {
+              title: `Novo comentário na tarefa "${task.title}"`,
+              taskId: task.id,
+              commentId: comment.id,
+            },
+          });
+          await new Promise((resolve) => setTimeout(resolve, 120));
+        }
+      }
+    }
+
     return comment;
   }
 

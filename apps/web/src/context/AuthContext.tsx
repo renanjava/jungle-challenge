@@ -1,4 +1,5 @@
 import React, { createContext, useState, useContext, useEffect } from "react";
+import { websocketService } from "@/services/websocketService";
 
 interface User {
   id: string;
@@ -72,6 +73,14 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   const [user, setUser] = useState<User | null>(null);
 
   useEffect(() => {
+    if (accessToken) {
+      websocketService.connect(accessToken);
+    } else {
+      websocketService.disconnect();
+    }
+  }, [accessToken]);
+
+  useEffect(() => {
     const storedAccess = localStorage.getItem("accessToken");
     const storedRefresh = getCookie("refreshToken");
 
@@ -108,6 +117,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     setUser(null);
     localStorage.removeItem("accessToken");
     deleteCookie("refreshToken");
+    websocketService.disconnect();
   };
 
   const value: AuthContextType = {
