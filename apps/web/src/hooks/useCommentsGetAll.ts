@@ -25,6 +25,6 @@ export const useCommentsGetAll = (
       }
     },
     retry: false,
-    queryKey: ["comments", page, size],
+    queryKey: ["comments", taskId, page, size],
   });
 };
