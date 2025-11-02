@@ -1,12 +1,15 @@
 import axios from "axios";
 import { API_GATEWAY_URL } from "./constants";
+import type { CreateCommentDto } from "@my-monorepo/shared-dtos";
 
-export async function commentsGetAll(
-  accessToken: string | null,
-  taskId: string
+export async function createComments(
+  data: CreateCommentDto,
+  taskId: string,
+  accessToken: string | null
 ) {
-  const response = await axios.get(
+  const response = await axios.post(
     API_GATEWAY_URL + `/api/tasks/${taskId}/comments`,
+    data,
     {
       headers: { Authorization: `Bearer ${accessToken}` },
     }

@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import {
   Dialog,
   DialogContent,
@@ -9,8 +9,9 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Plus, Loader2, MessageSquare } from "lucide-react";
-import type { IComments } from "@/interfaces/comments.interface";
 import { useCommentsGetAll } from "@/hooks/useCommentsGetAll";
+import { useAuth } from "@/context/AuthContext";
+import { useCreateComments } from "@/hooks/useCreateComments";
 
 interface CommentsModalProps {
   isOpen: boolean;
@@ -25,45 +26,30 @@ export function CommentsModal({
   taskId,
   taskTitle,
 }: CommentsModalProps) {
-  const [comments, setComments] = useState<IComments[]>([]);
   const [isAddingComment, setIsAddingComment] = useState(false);
   const [newComment, setNewComment] = useState("");
-  const [isSaving, setIsSaving] = useState(false);
   const { data, isLoading } = useCommentsGetAll(taskId);
-
-  useEffect(() => {
-    if (isOpen && taskId && !isLoading && data) {
-      console.log({ data: data.data });
-
-      setComments(data.data);
-    }
-  }, [isOpen, taskId]);
+  const { mutate, isPending } = useCreateComments();
+  const { user } = useAuth();
 
   const handleAddComment = async () => {
     if (!newComment.trim()) return;
 
-    setIsSaving(true);
-    try {
-      const response = await fetch(`/api/comments?taskId=${taskId}`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
+    mutate(
+      {
+        data: { text: newComment, user_id: user!.id },
+        id: taskId,
+      },
+      {
+        onSuccess: () => {
+          setNewComment("");
+          setIsAddingComment(false);
         },
-        body: JSON.stringify({ text: newComment }),
-      });
-
-      if (response.ok) {
-        const savedComment = await response.json();
-        setComments((prev) => [savedComment, ...prev]);
-        setNewComment("");
-        setIsAddingComment(false);
       }
-    } catch (error) {
-      console.error("Erro ao adicionar comentário:", error);
-    } finally {
-      setIsSaving(false);
-    }
+    );
   };
+
+  const comments = data?.data || [];
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
@@ -99,16 +85,16 @@ export function CommentsModal({
                     setIsAddingComment(false);
                     setNewComment("");
                   }}
-                  disabled={isSaving}
+                  disabled={isLoading}
                 >
                   Cancelar
                 </Button>
                 <Button
                   onClick={handleAddComment}
-                  disabled={!newComment.trim() || isSaving}
+                  disabled={!newComment.trim() || isPending}
                   className="bg-green-600 hover:bg-green-700"
                 >
-                  {isSaving ? (
+                  {isPending ? (
                     <>
                       <Loader2 className="h-4 w-4 mr-2 animate-spin" />
                       Salvando...

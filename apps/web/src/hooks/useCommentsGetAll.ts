@@ -4,17 +4,13 @@ import { refreshAccessToken } from "@/services/refreshAccessTokenService";
 import type { IPaginatedComments } from "@/interfaces/comments.interface";
 import { commentsGetAll } from "@/services/commentsGetAllService";
 
-export const useCommentsGetAll = (
-  taskId: string,
-  page: number = 1,
-  size: number = 6
-) => {
+export const useCommentsGetAll = (taskId: string) => {
   const { accessToken, setAccess, refreshToken } = useAuth();
 
   return useQuery<IPaginatedComments>({
     queryFn: async () => {
       try {
-        return await commentsGetAll(accessToken, taskId, page, size);
+        return await commentsGetAll(accessToken, taskId);
       } catch (err: any) {
         if (err.response?.status === 401) {
           const newToken = await refreshAccessToken(refreshToken);
@@ -25,6 +21,6 @@ export const useCommentsGetAll = (
       }
     },
     retry: false,
-    queryKey: ["comments", taskId, page, size],
+    queryKey: ["comments", taskId],
   });
 };
