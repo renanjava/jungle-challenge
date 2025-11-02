@@ -24,13 +24,17 @@ import {
   createTaskSchema,
   type CreateTaskFormValues,
 } from "@/schemas/create-task.schema";
-import type { TaskPriority, TaskStatus } from "@my-monorepo/shared-dtos";
+import type {
+  TaskPriority,
+  TaskStatus,
+  UpdateTaskDto,
+} from "@my-monorepo/shared-dtos";
 import type { ITask } from "@/interfaces/tasks.interface";
 
 interface EditTaskModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  onSubmit: (data: CreateTaskFormValues) => void;
+  onSubmit: (data: UpdateTaskDto) => void;
   task: ITask | null;
   isLoading?: boolean;
 }

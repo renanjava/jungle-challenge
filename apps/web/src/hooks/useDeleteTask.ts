@@ -15,7 +15,7 @@ export const useDeleteTask = () => {
       queryClient.invalidateQueries({ queryKey: ["tasks"] });
     },
     onError: (error: any) => {
-      toast.error(error.response?.data?.message || "Falha no cadastro");
+      toast.error(error.response?.data?.message || "Falha ao deletar");
     },
   });
 };

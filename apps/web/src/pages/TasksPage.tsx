@@ -25,6 +25,8 @@ import { useCreateTaskAssignment } from "@/hooks/useCreateTaskAssignment";
 import { useAuth } from "@/context/AuthContext";
 import type { CreateTaskFormValues } from "@/schemas/create-task.schema";
 import { useDeleteTask } from "@/hooks/useDeleteTask";
+import { useUpdateTask } from "@/hooks/useUpdateTask";
+import type { UpdateTaskDto } from "@my-monorepo/shared-dtos";
 
 export const Route = createFileRoute("/tasks")({
   component: TasksPage,
@@ -46,6 +48,7 @@ export function TasksPage() {
   const { mutate: createTask } = useCreateTask();
   const { mutate: joinTask } = useCreateTaskAssignment();
   const { mutate: deleteTask } = useDeleteTask();
+  const { mutate: updateTask } = useUpdateTask();
   const { user } = useAuth();
 
   const filteredTasks = useMemo(() => {
@@ -129,12 +132,12 @@ export function TasksPage() {
     setIsEditModalOpen(true);
   };
 
-  const handleUpdateTask = async (updatedData: CreateTaskFormValues) => {
+  const handleUpdateTask = async (updatedData: UpdateTaskDto) => {
     if (!taskToEdit) return;
 
     try {
       setIsEditing(true);
-      console.log("Atualizar tarefa:", taskToEdit.id, updatedData);
+      updateTask({ data: updatedData, id: taskToEdit.id });
       setIsEditModalOpen(false);
       setTaskToEdit(null);
     } catch (err) {
