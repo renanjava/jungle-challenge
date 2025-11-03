@@ -1,8 +1,8 @@
 ### Multi-stage Dockerfile for web (React + Vite)
 
 # --- Dependencies stage ---
-FROM node:22.20.0 AS deps
-RUN corepack enable && corepack prepare pnpm@9.15.0 --activate
+FROM node:18.19.0 AS deps
+RUN corepack enable && corepack prepare pnpm@8.0.0 --activate
 WORKDIR /app
 
 COPY package.json pnpm-workspace.yaml pnpm-lock.yaml turbo.json ./
@@ -14,7 +14,7 @@ RUN pnpm install --frozen-lockfile --prefer-offline
 # --- Development stage ---
 FROM node:22.20.0 AS development
 WORKDIR /app
-RUN corepack enable && corepack prepare pnpm@9.15.0 --activate
+RUN corepack enable && corepack prepare pnpm@8.0.0 --activate
 
 # Copia dependências e código
 COPY --from=deps /app/node_modules ./node_modules
@@ -32,7 +32,7 @@ CMD ["pnpm", "run", "dev", "--host", "0.0.0.0"]
 # --- Builder stage ---
 FROM node:22.20.0 AS builder
 WORKDIR /app
-RUN corepack enable && corepack prepare pnpm@9.15.0 --activate
+RUN corepack enable && corepack prepare pnpm@8.0.0 --activate
 
 COPY --from=deps /app/node_modules ./node_modules
 COPY --from=deps /app/packages ./packages

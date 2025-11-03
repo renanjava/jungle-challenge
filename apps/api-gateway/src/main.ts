@@ -1,11 +1,9 @@
-/* eslint-disable @typescript-eslint/no-unsafe-call */
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import helmet from 'helmet';
 import { LoggerService } from '@my-monorepo/shared-logger';
 import { ValidationPipe } from '@nestjs/common';
-import cookieParser from 'cookie-parser';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -13,7 +11,6 @@ async function bootstrap() {
   app.useLogger(app.get(LoggerService));
 
   app.use(helmet());
-  app.use(cookieParser());
 
   app.enableCors({
     origin: ['http://localhost:3000'],

@@ -246,12 +246,18 @@ DB_USER=postgres
 DB_PASS=password
 AUTH_DB_NAME=auth_db
 TASKS_DB_NAME=tasks_db
-NOTIFICATION_DB_NAME=notifications_db
+NOTIFICATION_DB_NAME=notification_db
 
 RABBITMQ_URL="amqp://admin:admin@rabbitmq:5672"
 ```
 
-3. **Suba os containers:**
+3. **Instale as dependencias na raiz do projeto:**
+
+```bash
+pnpm install
+```
+
+4. **Suba os containers:**
 
 ```bash
 # Limpar volumes antigos (se necessário)
@@ -438,10 +444,6 @@ pnpm run format           # Formata com Prettier
 
 ## ⚠️ Problemas conhecidos e melhorias futuras
 
-### Geral
-
-- [ ] **Docker compose não funciona como o esperado** — Alguns serviços ficam congelados, para rodar, é necessário testar localmente, trocar os hosts da .env e rodar apenas o rabbitmq e postgres no docker. Devido ao tempo, nao consegui finalizar
-
 ### Funcionalidades
 
 - [ ] **Health checks incompletos** — Verifica apenas API Gateway, não os demais serviços
@@ -569,7 +571,7 @@ docker-compose build --no-cache
 # Criar db-init/01-create-dbs.sql
 CREATE DATABASE auth_db;
 CREATE DATABASE tasks_db;
-CREATE DATABASE notifications_db;
+CREATE DATABASE notification_db;
 
 # Recriar volume do banco
 docker-compose down -v
