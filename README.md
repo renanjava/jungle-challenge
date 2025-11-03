@@ -251,17 +251,7 @@ NOTIFICATION_DB_NAME=notifications_db
 RABBITMQ_URL="amqp://admin:admin@rabbitmq:5672"
 ```
 
-3. **Crie o script de inicialização do banco:**
-
-Crie `db-init/01-create-dbs.sql`:
-
-```sql
-CREATE DATABASE auth_db;
-CREATE DATABASE tasks_db;
-CREATE DATABASE notifications_db;
-```
-
-4. **Suba os containers:**
+3. **Suba os containers:**
 
 ```bash
 # Limpar volumes antigos (se necessário)
@@ -311,7 +301,7 @@ nvm install 22.20.0
 # Para trabalhar no backend
 nvm use 18
 pnpm install
-pnpm run dev:gateway  # ou dev:auth, dev:tasks, dev:notification
+pnpm run dev:gateway  # ou dev:auth, dev:tasks, dev:notifications
 
 # Para trabalhar no frontend
 nvm use 22
@@ -325,12 +315,12 @@ pnpm run dev:web
 pnpm install
 
 # Desenvolvimento
-pnpm run dev              # Roda todos serviços em paralelo
-pnpm run dev:gateway      # Apenas API Gateway
-pnpm run dev:auth         # Apenas Auth Service
-pnpm run dev:tasks        # Apenas Tasks Service
-pnpm run dev:notification # Apenas Notifications Service
-pnpm run dev:web          # Apenas Frontend (requer Node 22)
+pnpm run dev               # Roda todos serviços em paralelo
+pnpm run dev:gateway       # Apenas API Gateway
+pnpm run dev:auth          # Apenas Auth Service
+pnpm run dev:tasks         # Apenas Tasks Service
+pnpm run dev:notifications # Apenas Notifications Service
+pnpm run dev:web           # Apenas Frontend (requer Node 22)
 
 # Build
 pnpm run build            # Build de todos os serviços

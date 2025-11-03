@@ -5,9 +5,7 @@ import { LoggerService } from '@my-monorepo/shared-logger';
 import { ValidationPipe } from '@nestjs/common';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule, {
-    logger: false,
-  });
+  const app = await NestFactory.create(AppModule);
 
   app.useLogger(app.get(LoggerService));
   app.useGlobalPipes(new ValidationPipe());
@@ -46,4 +44,4 @@ async function bootstrap() {
   logger.log(`RabbitMQ microservice conectado`);
 }
 
-void bootstrap();
+bootstrap();
