@@ -295,7 +295,7 @@ importers:
         specifier: ^8.20.0
         version: 8.45.0(eslint@9.36.0)(typescript@5.9.2)
 
-  apps/notification-service:
+  apps/notifications-service:
     devDependencies:
       '@eslint/eslintrc':
         specifier: ^3.2.0

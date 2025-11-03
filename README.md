@@ -189,6 +189,8 @@ RABBITMQ_URL="amqp://admin:admin@localhost:5672"
 ## 🧭 Decisões técnicas & trade‑offs
 
 - Expondo apenas a API Gateway e o WebSocket server com portas HTTP, o restante dos serviços a comunicação é feita apenas via RabbitMQ, porque eu aproveito a segurança da API Gateway e evito duplicar código nos outros serviços de implementação de JWT e Rate Limiting
+- Utilizando a ténica de multi-staged build para reduzir o tamanho das imagens finais dos serviços da aplicação
+- Reutilizando configurações gerais do nestjs (dependências e tsconfig), logger e DTOS através do conceito shared em /packages
 
 ---
 
@@ -201,6 +203,7 @@ RABBITMQ_URL="amqp://admin:admin@localhost:5672"
 - Filtro de prioridade e status não funciona corretamente quando há muitas tasks cadastradas, isso por conta da paginação e porque não implementei filtro no lado do back-end
 - Testes unitários não cobrem e não testam todas as regras de negócio dos serviços e da API Gateway, apenas o básico como a validação do rate limiting
 - Ao varrer os usuários para enviar notificação através do web socket, há chance de receber 429 pois ele tenta buscar e envia varias requisições procurando os usuários
+- Alguns dados do dashboard não são reais, apenas as informações do usuário
 
 ---
 
@@ -218,27 +221,74 @@ RABBITMQ_URL="amqp://admin:admin@localhost:5672"
 
 ---
 
-## 🕒 Registro de horas — 13 dias (template)
+# 🕒 Registro de horas — 13 dias
 
-Preencha abaixo com descrição do que foi feito e o tempo gasto por dia. Exemplo preenchido com base nas suas anotações iniciais.
+Relatório detalhado do tempo gasto no projeto JUNGLE-CHALLENGE durante o período de 20/10/2025 a 03/11/2025.
 
-| Dia | Data | Descrição (resumo)                                          | Tempo gasto (h) |
-| --: | :--: | :---------------------------------------------------------- | :-------------: |
-|   1 |      | Setup do monorepo (turborepo, pnpm) — configuração inicial  |       0.0       |
-|   2 |      | Estrutura de pastas, setup TypeScript (tsconfig base)       |       0.0       |
-|   3 |      | Docker Compose inicial e Dockerfiles (multi-stage)          |       0.0       |
-|   4 |      | Criar API Gateway (NestJS) e integrar Swagger               |       0.0       |
-|   5 |      | Auth service: JWT, bcrypt e integração com Gateway          |       0.0       |
-|   6 |      | Tasks service: entidades, TypeORM e endpoints CRUD          |       0.0       |
-|   7 |      | RabbitMQ: filas, eventos (task.created/task.updated)        |       0.0       |
-|   8 |      | Notifications service: consumer + persiste notificações     |       0.0       |
-|   9 |      | WebSocket Gateway e rooms (user/task)                       |       0.0       |
-|  10 |      | Frontend (React + Vite + shadcn + Tailwind) — layout e auth |       0.0       |
-|  11 |      | Integração WebSocket no frontend e toasts de notificação    |       0.0       |
-|  12 |      | Testes unitários iniciais e CI (GitHub Actions)             |       0.0       |
-|  13 |      | Ajustes, bugfixes, documentação e finalização               |       0.0       |
+## Resumo Geral
 
-## Total: 00.0 h
+- **Período:** 21/10/2025 - 02/11/2025
+- **Total de horas:** 37:11:29 (37.2 horas)
+- **Desenvolvedor:** Renan Geraldini Leão
+
+---
+
+## Detalhamento por Dia
+
+| Dia |    Data     | Descrição (resumo)                                          | Tempo gasto (h) |
+| --: | :---------: | :---------------------------------------------------------- | :-------------: |
+|   1 | 21/10/2025  | Monorepo & Docker básico                                    |       0.9       |
+|   2 |  21-22/10   | API Gateway — Estrutura Base                                |       4.3       |
+|   3 | 23/10/2025  | API Gateway — JWT & Guards                                  |       2.8       |
+|   4 | 22/10/2025  | Auth Service — Setup Completo                               |       1.5       |
+|   5 | 23/10/2025  | Auth Service — Endpoints JWT                                |       0.1       |
+|   6 | 24/10/2025  | Tasks Service — Estrutura & Entidades                       |       2.5       |
+|   7 |  24-26/10   | Tasks Service — CRUD de Tarefas                             |       3.0       |
+|   8 |  25-26/10   | Tasks Service — Comentários & RabbitMQ                      |       1.9       |
+|   9 |  26-28/10   | Notifications Service — Completo (RabbitMQ + WebSocket)     |       4.2       |
+|  10 |  28-29/10   | Front-end — Auth & Layout Base                              |       5.3       |
+|  11 |  30-01/11   | Front-end — Dashboard de Tarefas                            |       4.0       |
+|  12 | 02/11/2025  | Front-end — Detalhes, Comentários & WebSocket               |       2.9       |
+|  13 | 30/10-01/11 | Testes Finais, Ajustes & Documentação                       |       1.3       |
+|     |             | **Refatorações e Organização** (25-26/10)                   |       3.3       |
+|     |             | **Estudos** (TanStack Query/Router, Context API, WebSocket) |       1.3       |
+
+---
+
+### Backend Development
+
+- **API Gateway:** 7.1h (19.1%)
+- **Auth Service:** 1.6h (4.3%)
+- **Tasks Service:** 7.4h (19.9%)
+- **Notifications Service:** 4.2h (11.3%)
+
+### Frontend Development
+
+- **Auth & Layout:** 5.3h (14.2%)
+- **Dashboard:** 4.0h (10.8%)
+- **Detalhes & WebSocket:** 2.9h (7.8%)
+
+### Outras Atividades
+
+- **Refatorações e Organização:** 3.3h (8.9%)
+- **Estudos:** 1.3h (3.5%)
+- **Testes & Documentação:** 1.3h (3.5%)
+
+---
+
+## Observações
+
+1. Alguns dias tiveram trabalho dividido em múltiplas sessões (incluindo madrugada)
+2. O tempo de estudos incluiu:
+   - TanStack Query
+   - TanStack Router
+   - Context API
+   - WebSocket e integração front/back
+3. Refatorações foram realizadas principalmente nos dias 25-26/10
+4. O desenvolvimento seguiu uma abordagem incremental: backend → integração → frontend
+5. Total de horas corresponde ao relatório Clockify: **37:11:29**
+
+---
 
 ## 🧪 Como rodar testes
 
