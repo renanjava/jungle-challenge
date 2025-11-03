@@ -81,7 +81,7 @@ flowchart LR
 │   ├── api-gateway/
 │   ├── auth-service/
 │   ├── tasks-service/
-│   └── notification-service/
+│   └── notifications-service/
 ├── packages/
 │   ├── shared-config/
 │   ├── shared-dtos/

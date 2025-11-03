@@ -296,6 +296,13 @@ importers:
         version: 8.45.0(eslint@9.36.0)(typescript@5.9.2)
 
   apps/notifications-service:
+    dependencies:
+      amqp-connection-manager:
+        specifier: ^5.0.0
+        version: 5.0.0(amqplib@0.10.9)
+      amqplib:
+        specifier: ^0.10.9
+        version: 0.10.9
     devDependencies:
       '@eslint/eslintrc':
         specifier: ^3.2.0
@@ -327,6 +334,9 @@ importers:
       '@swc/core':
         specifier: ^1.10.7
         version: 1.10.7
+      '@types/amqplib':
+        specifier: ^0.10.7
+        version: 0.10.7
       '@types/express':
         specifier: ^5.0.0
         version: 5.0.0
@@ -381,6 +391,12 @@ importers:
       '@nestjs/mapped-types':
         specifier: '*'
         version: 2.0.4(@nestjs/common@11.1.7)(class-transformer@0.5.1)(class-validator@0.14.2)(reflect-metadata@0.1.14)
+      amqp-connection-manager:
+        specifier: ^5.0.0
+        version: 5.0.0(amqplib@0.10.9)
+      amqplib:
+        specifier: ^0.10.9
+        version: 0.10.9
     devDependencies:
       '@eslint/eslintrc':
         specifier: ^3.2.0
@@ -412,6 +428,9 @@ importers:
       '@swc/core':
         specifier: ^1.10.7
         version: 1.10.7
+      '@types/amqplib':
+        specifier: ^0.10.7
+        version: 0.10.7
       '@types/express':
         specifier: ^5.0.0
         version: 5.0.0

@@ -14,7 +14,6 @@ services:
       - NODE_ENV=development
     networks:
       - challenge-network
-    command: npm run dev -- --host 0.0.0.0
 
   # API Gateway
   api-gateway:
@@ -35,7 +34,7 @@ services:
       - PORT=3001
     depends_on:
       db:
-        condition: service_started
+        condition: service_healthy
       rabbitmq:
         condition: service_started
     networks:
@@ -60,7 +59,7 @@ services:
       - PORT=3002
     depends_on:
       db:
-        condition: service_started
+        condition: service_healthy
       rabbitmq:
         condition: service_started
     networks:
@@ -85,7 +84,7 @@ services:
       - PORT=3003
     depends_on:
       db:
-        condition: service_started
+        condition: service_healthy
       rabbitmq:
         condition: service_started
     networks:
@@ -110,7 +109,7 @@ services:
       - PORT=3004
     depends_on:
       db:
-        condition: service_started
+        condition: service_healthy
       rabbitmq:
         condition: service_started
     networks:
@@ -128,10 +127,16 @@ services:
     restart: always
     volumes:
       - postgres_data:/var/lib/postgresql/data
+      - ./db-init:/docker-entrypoint-initdb.d
     environment:
       POSTGRES_PASSWORD: password
       POSTGRES_USER: postgres
       POSTGRES_DB: challenge_db
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
 
   # RabbitMQ
   rabbitmq:

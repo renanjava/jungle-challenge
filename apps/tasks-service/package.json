@@ -26,11 +26,14 @@
     "dev": "npm run start:dev"
   },
   "dependencies": {
+    "amqp-connection-manager": "^5.0.0",
+    "amqplib": "^0.10.9",
     "@nestjs/mapped-types": "*"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3.2.0",
     "@eslint/js": "^9.18.0",
+    "@types/amqplib": "^0.10.7",
     "@my-monorepo/shared-config": "*",
     "@my-monorepo/shared-dtos": "*",
     "@my-monorepo/shared-logger": "*",

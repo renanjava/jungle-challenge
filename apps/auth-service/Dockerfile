@@ -1,4 +1,3 @@
-### Multi-stage Dockerfile for auth-service (NestJS)
 FROM node:18.19.0 AS deps
 RUN corepack enable && corepack prepare pnpm@latest --activate
 WORKDIR /app
@@ -7,12 +6,11 @@ COPY packages ./packages
 COPY apps/auth-service ./apps/auth-service
 RUN pnpm install --frozen-lockfile --prefer-offline
 
-# 👇 Novo estágio para desenvolvimento
 FROM node:18.19.0 AS development
 WORKDIR /app
 RUN corepack enable && corepack prepare pnpm@latest --activate
 COPY --from=deps /app/node_modules ./node_modules
-COPY --from=deps /app ./ # copia o projeto completo
+COPY --from=deps /app ./
 ENV NODE_ENV=development
 CMD ["pnpm", "--filter", "auth-service", "run", "start:dev"]
 
@@ -20,18 +18,14 @@ FROM node:18.19.0 AS builder
 WORKDIR /app
 RUN corepack enable && corepack prepare pnpm@latest --activate
 
-# Copy node_modules from deps stage
 COPY --from=deps /app/node_modules ./node_modules
 COPY --from=deps /app/packages ./packages
 COPY --from=deps /app/apps/auth-service ./apps/auth-service
 
-# Copy workspace config files
 COPY package.json pnpm-workspace.yaml pnpm-lock.yaml turbo.json ./
 
-# Copy all apps (needed for monorepo workspace resolution)
 COPY apps ./apps
 
-# build only the auth-service package using tsc
 WORKDIR /app/apps/auth-service
 RUN pnpm exec tsc -p tsconfig.build.json
 

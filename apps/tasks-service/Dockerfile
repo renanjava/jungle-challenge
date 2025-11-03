@@ -1,4 +1,3 @@
-### Multi-stage Dockerfile for tasks-service (NestJS)
 FROM node:18.19.0 AS deps
 RUN corepack enable && corepack prepare pnpm@latest --activate
 WORKDIR /app
@@ -7,16 +6,14 @@ COPY packages ./packages
 COPY apps/tasks-service ./apps/tasks-service
 RUN pnpm install --frozen-lockfile --prefer-offline
 
-# 👇 Novo stage de desenvolvimento
 FROM node:18.19.0 AS development
 WORKDIR /app
 RUN corepack enable && corepack prepare pnpm@latest --activate
 COPY --from=deps /app/node_modules ./node_modules
-COPY --from=deps /app ./ # copia o código-fonte inteiro
+COPY --from=deps /app ./
 ENV NODE_ENV=development
 CMD ["pnpm", "--filter", "tasks-service", "run", "start:dev"]
 
-# Stage de build
 FROM node:18.19.0 AS builder
 WORKDIR /app
 RUN corepack enable && corepack prepare pnpm@latest --activate

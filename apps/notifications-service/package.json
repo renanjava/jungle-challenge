@@ -1,5 +1,5 @@
 {
-  "name": "@my-monorepo/notification-service",
+  "name": "@my-monorepo/notifications-service",
   "version": "0.0.1",
   "description": "",
   "author": "",
@@ -25,7 +25,12 @@
     "migration:revert": "npm run typeorm -- migration:revert -d src/data-source.ts",
     "dev": "npm run start:dev"
   },
+  "dependencies": {
+    "amqp-connection-manager": "^5.0.0",
+    "amqplib": "^0.10.9"
+  },
   "devDependencies": {
+    "@types/amqplib": "^0.10.7",
     "@eslint/eslintrc": "^3.2.0",
     "@eslint/js": "^9.18.0",
     "@my-monorepo/shared-config": "*",
