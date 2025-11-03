@@ -57,4 +57,4 @@ COPY --from=builder /app/apps/tasks-service/src/data-source.ts ./src/data-source
 EXPOSE 3003
 
 # Roda migrations antes de iniciar o app
-CMD ["sh", "-c", "npm run migration:run && node dist/main"]
+CMD ["sh", "-c", "pnpm run migration:run && node dist/main"]

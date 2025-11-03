@@ -46,4 +46,4 @@ COPY --from=builder /app/apps/auth-service/src/migrations ./src/migrations
 COPY --from=builder /app/apps/auth-service/src/data-source.ts ./src/data-source.ts
 
 EXPOSE 3002
-CMD ["sh", "-c", "npm run migration:run && node dist/main"]
+CMD ["sh", "-c", "pnpm run migration:run && node dist/main"]

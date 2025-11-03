@@ -46,4 +46,4 @@ COPY --from=builder /app/apps/notifications-service/src/migrations ./src/migrati
 COPY --from=builder /app/apps/notifications-service/src/data-source.ts ./src/data-source.ts
 
 EXPOSE 3004
-CMD ["sh", "-c", "npm run migration:run && node dist/main"]
+CMD ["sh", "-c", "pnpm run migration:run && node dist/main"]
